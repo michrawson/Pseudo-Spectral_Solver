@@ -9,9 +9,13 @@ FLGS = -g -pg -std=f2008 -I. -fbounds-check
 #build targets
 
 finite_differences.tsk:
-	        $(FC) *.F08 -o $@ $< $(FLGS)
+	        find . -maxdepth 1 -type f -name '*.[fF]??' | xargs $(FC) -o $@ $(FLGS)
+			find . -maxdepth 1 -type f -name '*.[fF]??' | xargs -I {} f2py -c {} -m finite_differences 
+
+#	        find . -maxdepth 1 -type f -name '*.[fF]??' | tr '\n' ' ' | $(FC) -o $@ $< $(FLGS)
+#	        find . -maxdepth 1 -type f -name '*.[fF]??' | tr '\n' ' ' | $(FC) *.{f,F}?? -o $@ $< $(FLGS)
 #	        $(FC)    *.o -o $@ $^ $(FLGS)
 
 clean:
-	        rm -f *.o *.tsk
+	        rm -fr *.so *.o *.tsk
 
