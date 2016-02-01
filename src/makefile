@@ -6,7 +6,7 @@ main.tsk :
 	gfortran $(FLGS) \
 				-L/Users/mich/github/Pseudo-Spectral_Solver/fftpack5.1/lib \
                 -lfftpack \
-                *.f08  -o main.tsk
+                lib/*.f08 *.f08  -o main.tsk
 
 clean:
-	rm -f *.tsk
+	rm -rf *.mod *.o *.tsk *.tsk.dSYM
