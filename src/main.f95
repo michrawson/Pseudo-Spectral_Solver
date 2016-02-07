@@ -4,12 +4,13 @@ program main
     use variable_coeff_wave_eq
     implicit none
 
-    real                    :: error(9+1) = 0
+    double precision                                        :: error(9+1) = 0
 
-    integer, parameter      :: N = 128
-    real, dimension(N)                  :: x = 0
-    real, dimension(:,:), allocatable   :: result
-    real, dimension(:), allocatable     :: tdata
+    integer, parameter                          :: N = 128, tmax = 8
+    double precision, parameter                         :: tplot = 0.15
+    double precision, dimension(N)                      :: x = 0
+    double precision, dimension(N,N)    :: result
+    double precision, dimension(int(tmax/tplot))      :: tdata
 
     call finite_differences_run(error)
     PRINT *,"error",error(1:10)

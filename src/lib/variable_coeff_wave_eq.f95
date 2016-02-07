@@ -1,22 +1,25 @@
 module variable_coeff_wave_eq
         implicit none
+        integer, parameter:: dp=kind(0.d0)
 
         contains
-
             subroutine variable_coeff_wave_eq_run(x,tdata,result)
                 implicit none
                 
-                integer, parameter      :: N = 128, tmax = 8
+                integer, parameter          :: N = 128
+                integer, parameter          :: tmax = 8
+                double precision, parameter :: tplot = 0.15
                 
-                real, dimension(N), intent(out)                 :: x
-                real, dimension(N)      :: c, v, vold, v_hat, vnew, w
-                complex, dimension(N)   :: w_hat, ifft
-                real, dimension(:,:), allocatable, intent(out)  :: result
-                real, dimension(:), allocatable, intent(out)    :: tdata
-                real, dimension(:), allocatable                 :: wsave, work
+                double precision, dimension(N), intent(out)                     :: x
+                double precision, dimension(int(tmax/tplot)), intent(out)       :: tdata
+                double precision, dimension(int(tmax/tplot)+1,N), intent(out)   :: result
 
-                integer                 :: i, j, plotgap, nplots, ier
-                real                    :: pi, h, t, dt, tplot
+                double precision, dimension(N)              :: c, v, vold, v_hat, vnew, w
+                double complex, dimension(N)                :: w_hat, ifft
+                double precision, dimension(:), allocatable :: wsave, work
+
+                integer                         :: i, j, plotgap, nplots, ier
+                double precision                :: pi, h, t, dt
 
                 pi = 4.*atan(1.)
                 h = 2*pi/N
@@ -27,15 +30,12 @@ module variable_coeff_wave_eq
                 v = exp(-100*((x-1)**2.))
                 vold = exp(-100*((x-.2*dt-1)**2.))
 
-                tplot = .15
                 plotgap = nint(tplot/dt)
                 dt = tplot/plotgap
                 nplots = nint(tmax/tplot)
 
-                allocate(tdata(nplots))
                 tdata = -1
 
-                allocate(result(nplots+1,N))
                 result = 0
                 result(1,1:N) = v
 

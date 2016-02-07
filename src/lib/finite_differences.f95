@@ -3,14 +3,14 @@ module finite_differences
 
         contains
 
-            real function inner_loop(N)
+            double precision function inner_loop(N)
                 implicit none
                 integer, intent(in)     :: N
-                real                :: error
-                real, dimension(:), allocatable      :: x, u, u_prime, e
-                real, dimension(:,:), allocatable    :: D, tmp1, tmp2
+                double precision                :: error
+                double precision, dimension(:), allocatable      :: x, u, u_prime, e
+                double precision, dimension(:,:), allocatable    :: D, tmp1, tmp2
                 integer                 :: j
-                real                    :: pi, h
+                double precision                    :: pi, h
 
                 allocate(x(N))
                 allocate(u(N))
@@ -74,7 +74,7 @@ module finite_differences
 
             subroutine finite_differences_run(error)
                 implicit none
-                real, dimension(9+1), intent(inout) :: error
+                double precision, dimension(9+1), intent(inout) :: error
                 integer, dimension(9+1)    :: Nvec
                 integer                 :: i, N
 
