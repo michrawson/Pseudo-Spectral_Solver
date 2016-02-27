@@ -13,38 +13,27 @@ Nvec = np.asarray((np.ones(9+1,'i')*2) ** range(3,12+1),'i')
 # print
 # print fmain.variable_coeff_wave_eq.__doc__
 
-fmain.finite_differences.finite_differences_run(error)
+# fmain.finite_differences.finite_differences_run(error)
 
-print 'error',error
+# print 'error',error
 
 
-x, tdata, result = fmain.variable_coeff_wave_eq.variable_coeff_wave_eq_run()
-print 'x',x.shape
-print 'x',x
-print 'tdata',tdata.shape
-print 'tdata',tdata
-print 'result',result.shape
-# print 'result',result
+# x, tdata, result = fmain.variable_coeff_wave_eq.variable_coeff_wave_eq_run()
+x, tdata, result = fmain.variable_coeff_wave_eq_pseudo.variable_coeff_wave_eq_pseudo_run()
+# print 'x',x.shape
+# print 'x',x
+# print 'tdata',tdata.shape
+# print 'tdata',tdata
+# print 'result',result.shape
+# print 'result',result[0,:]
+# print 'result',result[1,:]
+# print 'result',result[2,:]
 
 for i in range(result.shape[0]):
-    print result[i,:]
+    plt.clf() 
+    ax = plt.figure().add_subplot(1,1,1)
+    ax.plot(x, result[i,:])
+    plt.ylim(-.1,1)
+    plt.savefig('wave'+str(i)+".png")
 
-# print result[0,:].T - result[20,:].T
-
-ax = plt.figure().add_subplot(1,1,1)
-# ax.plot(x,result[0,:].T, 'r--',
-#         x, result[1,:].T, 'bs',
-#         x, result[2,:].T, 'g^')
-        # x, result[3,:].T, 'y--',
-        # x, result[4,:].T, 'os',
-        # x, result[5,:].T, 'b^',
-        # x, result[6,:].T, 'p--')
-
-ax.plot(x,result[0,:])
-# ax.plot(x,result[20,:].T)
-# ax.plot(x,result[30,:].T)
-# ax.plot(x,result[40,:].T)
-# ax.plot(x,result[50,:].T)
-# ax.loglog(Nvec, error)
-# ax.loglog(Nvec, Nvec**(-4.),'--')
-plt.show()
+sys.exit()
