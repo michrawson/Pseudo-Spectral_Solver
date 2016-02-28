@@ -3,23 +3,26 @@ implicit none
 
 contains
 
-    subroutine variable_coeff_wave_eq_pseudo_run(x,tdata,result)
+    subroutine variable_coeff_wave_eq_pseudo_run(x_final,tdata_final,result_final)
     implicit none
         integer, parameter          :: n = 128
         integer, parameter          :: tmax = 8
-        double precision, parameter :: tplot = 0.15
+        real ( kind = 16 ), parameter :: tplot = 0.15
 
-        double precision, dimension(n), intent(out)                   :: x
-        double precision, dimension(int(tmax/tplot)+1), intent(out)     :: tdata
-        double precision, dimension(int(tmax/tplot)+1,n), intent(out) :: result
+        real ( kind = 8 ), dimension(n), intent(out)                   :: x_final
+        real ( kind = 8 ), dimension(int(tmax/tplot)+1), intent(out)     :: tdata_final
+        real ( kind = 8 ), dimension(int(tmax/tplot)+1,n), intent(out) :: result_final
 
-        double precision, dimension(n)              :: c, w, v, vold, vnew
-        complex ( kind = 8 ), dimension(N)          :: w_hat, ifft, v2, v_hat
-        double precision, dimension(n,n)            :: D
+        real ( kind = 16 ), dimension(n)                  :: x
+        real ( kind = 16 ), dimension(int(tmax/tplot)+1)    :: tdata
+        real ( kind = 16 ), dimension(int(tmax/tplot)+1,n) :: result
 
+        real ( kind = 16 ), dimension(n)              :: c, w, v, vold, vnew
+        complex ( kind = 8 ), dimension(n)          :: w_hat, ifft, v2, v_hat
+        real ( kind = 16 ), dimension(n,n)            :: D
 
-        integer               :: i, j, plotgap, nplots, k, plan_backward, plan_forward
-        double precision      :: pi, h, t, dt
+        integer               :: i, j, plotgap, nplots, plan_backward, plan_forward
+        real ( kind = 16 )      :: pi, h, t, dt
 
         integer ( kind = 4 ), parameter :: fftw_forward = -1
         integer ( kind = 4 ), parameter :: fftw_backward = +1
@@ -89,6 +92,10 @@ contains
             result(i+1,:) = v
             tdata(i+1) = t
         end do
+
+    x_final = x
+    tdata_final = tdata
+    result_final = result
 
     end subroutine variable_coeff_wave_eq_pseudo_run
 
