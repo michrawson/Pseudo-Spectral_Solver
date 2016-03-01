@@ -7,22 +7,22 @@ contains
     implicit none
         integer, parameter          :: n = 128
         integer, parameter          :: tmax = 8
-        real ( kind = 16 ), parameter :: tplot = 0.15
+        real ( kind = 8 ), parameter :: tplot = 0.15
 
         real ( kind = 8 ), dimension(n), intent(out)                   :: x_final
         real ( kind = 8 ), dimension(int(tmax/tplot)+1), intent(out)     :: tdata_final
         real ( kind = 8 ), dimension(int(tmax/tplot)+1,n), intent(out) :: result_final
 
-        real ( kind = 16 ), dimension(n)                  :: x
-        real ( kind = 16 ), dimension(int(tmax/tplot)+1)    :: tdata
-        real ( kind = 16 ), dimension(int(tmax/tplot)+1,n) :: result
+        real ( kind = 8 ), dimension(n)                  :: x
+        real ( kind = 8 ), dimension(int(tmax/tplot)+1)    :: tdata
+        real ( kind = 8 ), dimension(int(tmax/tplot)+1,n) :: result
 
-        real ( kind = 16 ), dimension(n)              :: c, w, v, vold, vnew
+        real ( kind = 8 ), dimension(n)              :: c, w, v, vold, vnew
         complex ( kind = 8 ), dimension(n)          :: w_hat, ifft, v2, v_hat
-        real ( kind = 16 ), dimension(n,n)            :: D
+        real ( kind = 8 ), dimension(n,n)            :: D
 
         integer               :: i, j, plotgap, nplots, plan_backward, plan_forward
-        real ( kind = 16 )      :: pi, h, t, dt
+        real ( kind = 8 )      :: pi, h, t, dt
 
         integer ( kind = 4 ), parameter :: fftw_forward = -1
         integer ( kind = 4 ), parameter :: fftw_backward = +1
