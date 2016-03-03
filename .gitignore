@@ -1,4 +1,6 @@
 *.o
+*.la
+*.lo
 *.so
 *.mod
 *.exe
