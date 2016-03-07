@@ -20,10 +20,6 @@ program main
 !    PRINT *,"x",x
 !    PRINT *,"tdata",tdata
 !    PRINT *,"result",result(1,:)
-!    PRINT *,"result",result(2,:)
-!    PRINT *,"result",result(:,10)
-!    PRINT *,"result",result(:,100)
-!    PRINT *,"result",result(:,N)
 
     result = test()
 
@@ -31,9 +27,9 @@ program main
             real ( kind = 8 ) function test()
                 implicit none
 
-                real ( kind = 8 ), dimension(n)     :: x, y, diff, vxp, vxp2, vxp3, vyp, vyp2, vyp3, temp
-                complex ( kind = 8 ), dimension(n)  :: w_hat, ifft, v2, v_hat
-                real ( kind = 8 ), dimension(n,n)   :: v
+                real ( kind = 8 ), dimension(n)     :: x, y, diff, vxp3, vyp3, temp
+                complex ( kind = 8 ), dimension(n)  :: w_hat, ifft, v_hat, v2
+                real ( kind = 8 ), dimension(n,n)   :: v,vxp,vyp,vxp2,vyp2
                 real ( kind = 8 ), dimension(n,n)   :: D
                 integer                             :: j,i,plan_backward, plan_forward
                 real ( kind = 8 )                   :: pi, h
@@ -63,14 +59,15 @@ program main
                     end do
                 end do
 
-                v = 0;
-
                 diff=0;
-                do i=1,n
-                    v(:,i) = cos(x)*exp(sin(y(i)));
 
-                    vxp= -sin(x)*exp(sin(y(i)));
-                    vxp2 = MATMUL(D,v(:,i));
+                v = spread(cos(x), dim=2, ncopies=n) * spread(exp(sin(y)), dim=1, ncopies=n)
+                vxp = spread(-sin(x), dim=2, ncopies=n) * spread(exp(sin(y)), dim=1, ncopies=n)
+                vyp = spread(cos(x), dim=2, ncopies=n) * spread(exp(sin(y))*cos(y), dim=1, ncopies=n)
+                vxp2 = MATMUL(D,v);
+                vyp2 = transpose(MATMUL(D,transpose(v)));
+
+                do i=1,n
 
                     v_hat=0
                     v2 = v(:,i)
@@ -85,14 +82,10 @@ program main
 
                     vxp3 = real(ifft)
 
-                    diff = MAX(MAXVAL(diff), MAXVAL(abs(vxp - vxp2)), MAXVAL(abs(vxp3 - vxp)))
+                    diff = MAX(MAXVAL(diff), MAXVAL(abs(vxp - vxp2)), MAXVAL(abs(vxp3 - vxp(:,i))))
                 end do
 
                 do i=1,n
-
-                    vyp= cos(x(i))*exp(sin(y))*cos(y);
-
-                    vyp2 = MATMUL(D,v(i,:));
 
                     v_hat=0
                     v2 = v(i,:)
@@ -107,7 +100,7 @@ program main
 
                     vyp3 = real(ifft)
 
-                    diff = MAX(MAXVAL(diff), MAXVAL(abs(vyp - vyp2)), MAXVAL(abs(vyp3 - vyp)));
+                    diff = MAX(MAXVAL(diff), MAXVAL(abs(vyp - vyp2)), MAXVAL(abs(vyp3 - vyp(i,:))));
                 end do
 
                 PRINT *,"linf diff", MAXVAL(abs(diff))
