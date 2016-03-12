@@ -1,6 +1,6 @@
 #-std=f95
 FLGS=-g -I. -fbounds-check -fbacktrace \
-        -Wall -Wextra -Wconversion -pedantic  -freal-4-real-8
+        -Wall -Wextra -Wconversion -pedantic  -freal-4-real-8 -fcheck=all
 
 main.tsk :
 	gfortran $(FLGS) \
