@@ -19,7 +19,7 @@ Nvec = np.asarray((np.ones(9+1,'i')*2) ** range(3,12+1),'i')
 
 
 # x, tdata, result = fmain.variable_coeff_wave_eq.variable_coeff_wave_eq_run()
-x, tdata, result = fmain.variable_coeff_wave_eq_pseudo.variable_coeff_wave_eq_pseudo_run()
+x, tdata, result = fmain.variable_coeff_wave_eq_pseudo_rk.variable_coeff_wave_eq_pseudo_rk_run()
 # print 'x',x.shape
 # print 'x',x
 # print 'tdata',tdata.shape
