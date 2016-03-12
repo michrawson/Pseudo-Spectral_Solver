@@ -42,18 +42,18 @@ contains
                 t = t+dt
 
                 call fft_prime_run(v, prime)
-                k1 = -1.0*prime
+                k1 = -1.0*c*prime
 
                 call fft_prime_run(v + dt*k1/2, prime)
-                k2 = -1.0*prime
+                k2 = -1.0*c*prime
 
                 call fft_prime_run(v + dt*k2/2, prime)
-                k3 = -1.0*prime
+                k3 = -1.0*c*prime
 
                 call fft_prime_run(v + dt*k3, prime)
-                k4 = -1.0*prime
+                k4 = -1.0*c*prime
 
-                v = v + dt/6.0*(k1 + 2.*k2 + 2.*k3 + k4)
+                v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
 
             end do
             result(i+1,:) = v

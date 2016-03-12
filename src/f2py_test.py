@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 x, tdata, result = fmain.variable_coeff_wave_eq_pseudo_rk.variable_coeff_wave_eq_pseudo_rk_run()
 
-for i in range(min(result.shape[0],30)):
+for i in range(result.shape[0]):
     plt.clf() 
     ax = plt.figure().add_subplot(1,1,1)
     ax.plot(x, result[i,:])
