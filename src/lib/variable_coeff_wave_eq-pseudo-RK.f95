@@ -69,6 +69,9 @@ contains
 
                 v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
 
+                PRINT *,"error: linf diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
+                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
+
             end do
             result(i+1,1:n,1:n) = v
             tdata(i+1) = t
