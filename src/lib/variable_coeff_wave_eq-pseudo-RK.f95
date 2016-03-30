@@ -5,6 +5,7 @@ contains
 
     subroutine variable_coeff_wave_eq_pseudo_rk_run(x, y, tdata, result)
     use fft_prime
+    use zero_finder
     implicit none
         integer, parameter          :: n = 128
         integer, parameter          :: tmax = 4
@@ -17,7 +18,7 @@ contains
         real ( kind = 8 ), dimension(n,n)              :: v, k1,k2,k3,k4,prime_x,prime_y,prime_phi_x,prime_phi_y
 
         integer               :: i, j, k, plotgap, nplots
-        real ( kind = 8 )      :: pi, h, t, dt
+        real ( kind = 8 )      :: pi, h, t, dt, temp1, temp2
 
         pi = 4.*atan(1.)
         h = 2.*pi/N
@@ -69,10 +70,19 @@ contains
 
                 v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
 
+                if (maxval(-result(i,1:n,1:n)) < 0) then
+                    PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
+                end if
+
+
                 PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
                                              - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
 
-                PRINT *,"error: maxval: diff", ( maxval(result(1,1:n,1:n)) - maxval(v) )
+                PRINT *,"error: maxval: diff", ( maxval(result(i,1:n,1:n)) - maxval(v) )
+
+                call zero_finder_run(maxloc(result(i,1:n,1:n)), result(i,1:n,1:n), temp1)
+                call zero_finder_run(maxloc(result(i-1,1:n,1:n)), result(i-1,1:n,1:n), temp2)
+                PRINT *,"error: better maxval: diff", abs( temp1 - temp2 )
 
             end do
             result(i+1,1:n,1:n) = v
