@@ -80,8 +80,8 @@ contains
 
                 PRINT *,"error: maxval: diff", ( maxval(result(i,1:n,1:n)) - maxval(v) )
 
-                call zero_finder_run(maxloc(result(i,1:n,1:n)), result(i,1:n,1:n), temp1)
-                call zero_finder_run(maxloc(result(i-1,1:n,1:n)), result(i-1,1:n,1:n), temp2)
+!                call zero_finder_run(maxloc(result(i,1:n,1:n)), result(i,1:n,1:n), temp1)
+!                call zero_finder_run(maxloc(result(i-1,1:n,1:n)), result(i-1,1:n,1:n), temp2)
                 PRINT *,"error: better maxval: diff", abs( temp1 - temp2 )
 
             end do
