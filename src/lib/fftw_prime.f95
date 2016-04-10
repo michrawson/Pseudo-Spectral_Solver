@@ -1,4 +1,4 @@
-module fft_prime
+module fftw_prime
 implicit none
 
 contains
@@ -59,7 +59,7 @@ contains
         integer ( kind = 4 ), parameter :: fftw_backward = +1
         integer ( kind = 4 ), parameter :: fftw_estimate = 64
         integer                         :: j, plan_forward, plan_backward
-        complex*16 w_hat(n), ifft(n), v2(n), v_hat(n)
+        complex (kind = 8) :: w_hat(n), ifft(n), v2(n), v_hat(n)
 
         w_hat=0
         ifft=0
@@ -80,4 +80,4 @@ contains
 
     end subroutine fft_prime_run
 
-end module fft_prime
+end module fftw_prime
