@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # print fmain.variable_coeff_wave_eq.__doc__
 
 
-p_xi = fmain.zero_finder.triginterp_caller(np.pi)
+p_xi = fmain.zero_finder.triginterp_caller(np.pi-np.sqrt(2))
 print p_xi
 
 sys.exit()

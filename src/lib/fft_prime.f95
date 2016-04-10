@@ -8,7 +8,7 @@ contains
         integer, parameter                                 :: n = 128
         real ( kind = 8 ), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
-        integer               :: i, j
+        integer               :: i
 
         do i=1,n
             call fft_prime_run( v(:,i), v_prime(:,i))
@@ -21,7 +21,7 @@ contains
         integer, parameter                                 :: n = 128
         real ( kind = 8 ), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
-        integer               :: i, j
+        integer               :: i
 
         do i=1,n
             call fft_prime_run( v(i, :), v_prime(i, :))
