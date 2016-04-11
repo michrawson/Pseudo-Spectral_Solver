@@ -36,7 +36,7 @@ contains
         integer, parameter                  :: n = 128
         integer, intent(in)       :: x0_index(2)
         real ( kind = 8 ), intent(in)       :: p_y(n,n)
-        real ( kind = 8 )                   :: pi, x(2), grad_y(2), x0(2), f_x, &
+        real ( kind = 8 )                   :: pi, x(2), grad_y(2), x0(2), &
                                                 hess_y(2,2), hess_inv_y(2,2)
         complex ( kind = 8 ), dimension(n, n)  ::  fft_2d_prime_x_of_y, fft_2d_prime_y_of_y, &
                     fft_2d_prime_x_x_of_y, fft_2d_prime_y_y_of_y, fft_2d_prime_x_y_of_y, fft_2d_prime_y_x_of_y
@@ -72,8 +72,6 @@ contains
         iter_count = 0
         do while (maxval(abs(grad_y)) > 10d-14)
             grad_y = [ triginterp_fft(x, fft_2d_prime_x_of_y), triginterp_fft(x, fft_2d_prime_y_of_y) ]
-
-            f_x = triginterp(x, p_y)
 
             hess_y(1,:) = [triginterp_fft(x,fft_2d_prime_x_x_of_y), triginterp_fft(x,fft_2d_prime_x_y_of_y)]
             hess_y(2,:) = [triginterp_fft(x,fft_2d_prime_y_x_of_y), triginterp_fft(x,fft_2d_prime_y_y_of_y)]
