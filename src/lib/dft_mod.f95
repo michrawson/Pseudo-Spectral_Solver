@@ -84,26 +84,6 @@ contains
         end do
     end subroutine fft_prime_2d_partial_y
 !------------------------------------------------------------------------------------------
-    subroutine dft_prime_prime_coeff(y)
-    implicit none
-        integer, parameter          :: n = 128
-        complex (kind = 8), intent(inout)                 :: y(n)
-        integer                             :: j
-
-        call dft(y)
-        y = (-1.0) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * y
-    end subroutine dft_prime_prime_coeff
-
-    subroutine dft_prime_coeff(y)
-    implicit none
-        integer, parameter          :: n = 128
-        complex (kind = 8), intent(inout)                 :: y(n)
-        integer                             :: j
-
-        call dft(y)
-        y = (0., 1.) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * y
-    end subroutine dft_prime_coeff
-!------------------------------------------------------------------------------------------
     subroutine dft(y)
     implicit none
         integer, parameter                  :: n = 128

@@ -75,8 +75,6 @@ contains
 
             f_x = triginterp(x, p_y)
 
-!            print *,"triginterp(x)",f_x
-
             hess_y(1,:) = [triginterp_fft(x,fft_2d_prime_x_x_of_y), triginterp_fft(x,fft_2d_prime_x_y_of_y)]
             hess_y(2,:) = [triginterp_fft(x,fft_2d_prime_y_x_of_y), triginterp_fft(x,fft_2d_prime_y_y_of_y)]
             hess_inv_y(1,:) = [hess_y(2,2), -1*hess_y(1,2)]
