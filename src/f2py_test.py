@@ -10,12 +10,6 @@ import matplotlib.pyplot as plt
 # print
 # print fmain.variable_coeff_wave_eq.__doc__
 
-
-result = fmain.zero_finder.triginterp_caller(np.pi-np.sqrt(2),np.pi-np.sqrt(2))
-print result
-
-sys.exit()
-
 x, y, tdata, result = fmain.variable_coeff_wave_eq_pseudo_rk.variable_coeff_wave_eq_pseudo_rk_run()
 
 for i in range(result.shape[0]):

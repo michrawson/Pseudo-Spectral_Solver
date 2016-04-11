@@ -48,11 +48,9 @@ contains
         result = 0
         result(1,1:n,1:n) = v
 
-        print *,"maxloc",maxloc(result(1,1:n,1:n))
-        call max_finder_run(maxloc(result(1,1:n,1:n)), result(1,1:n,1:n), prev_max)
-        PRINT *,"error: better maxval: ", prev_max
+        prev_max = max_finder_run(maxloc(v), v)
 
-        do i=1,nplots
+        do i=1, nplots
             do j = 1,plotgap
                 t = t+dt
 
@@ -78,18 +76,19 @@ contains
                     PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
                 end if
 
-                PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
-                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
+!                PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
+!                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
 
-                PRINT *,"error: maxval: diff", ( maxval(result(i,1:n,1:n)) - maxval(v) )
-
-                call max_finder_run(maxloc(v), v, curr_max)
-                PRINT *,"error: better maxval: diff", abs( prev_max - curr_max )
-                return
+!                PRINT *,"error: maxval: diff", ( maxval(result(i,1:n,1:n)) - maxval(v) )
 
             end do
+
+            curr_max = max_finder_run(maxloc(v), v)
+            PRINT *,"error: better maxval: diff", ( prev_max - curr_max )
+
+            prev_max = curr_max
+
             result(i+1,1:n,1:n) = v
-            call max_finder_run(maxloc(result(i+1,1:n,1:n)), result(i+1,1:n,1:n), prev_max)
             tdata(i+1) = t
         end do
 

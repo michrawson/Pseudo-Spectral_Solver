@@ -15,8 +15,8 @@ program main
     real ( kind = 8 )                 :: x(n), y(n)
 
     call variable_coeff_wave_eq_pseudo_rk_run(x,y,tdata,result)
-!    PRINT *,"x",x
-!    PRINT *,"tdata",tdata
-!    PRINT *,"result",result(1,:,1)
+    PRINT *,"x",x
+    PRINT *,"tdata",tdata
+    PRINT *,"result",result(1,:,1)
 
 end program main

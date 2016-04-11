@@ -3,14 +3,72 @@ implicit none
 
 contains
 
+    subroutine fft_prime_prime_2d_partial_y_y(v)
+    implicit none
+        integer, parameter                                 :: n = 128
+        complex (kind = 8), dimension(n, n), intent(inout)      :: v
+        integer               :: i, j
+
+        call dft_2d(v)
+        do i=1,n
+            v(i,:) = (-1)*(/ (j,j=-N/2+1,N/2-1), 0 /) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(i,:)
+        end do
+    end subroutine fft_prime_prime_2d_partial_y_y
+
+    subroutine fft_prime_prime_2d_partial_x_x(v)
+    implicit none
+        integer, parameter                                 :: n = 128
+        complex (kind = 8), dimension(n, n), intent(inout)      :: v
+        integer               :: i, j
+
+        call dft_2d(v)
+        do i=1,n
+            v(:,i) = (-1)*(/ (j,j=-N/2+1,N/2-1), 0 /) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(:,i)
+        end do
+    end subroutine fft_prime_prime_2d_partial_x_x
+
+    subroutine fft_prime_prime_2d_partial_x_y(v)
+    implicit none
+        integer, parameter                                 :: n = 128
+        complex (kind = 8), dimension(n, n), intent(inout)      :: v
+        integer               :: i, j
+
+        call dft_2d(v)
+        do i=1,n
+            v(:,i) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(:,i)
+        end do
+        do i=1,n
+            v(i,:) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(i,:)
+        end do
+
+    end subroutine fft_prime_prime_2d_partial_x_y
+
+    subroutine fft_prime_prime_2d_partial_y_x(v)
+    implicit none
+        integer, parameter                                 :: n = 128
+        complex (kind = 8), dimension(n, n), intent(inout)      :: v
+        integer               :: i, j
+
+        call dft_2d(v)
+        do i=1,n
+            v(i,:) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(i,:)
+        end do
+        do i=1,n
+            v(:,i) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(:,i)
+        end do
+
+    end subroutine fft_prime_prime_2d_partial_y_x
+
+!------------------------------------------------------------------------------------------
     subroutine fft_prime_2d_partial_x(v)
     implicit none
         integer, parameter                                 :: n = 128
         complex (kind = 8), dimension(n, n), intent(inout)      :: v
-        integer               :: i
+        integer               :: i, j
 
+        call dft_2d(v)
         do i=1,n
-            call dft_prime_coeff( v(:,i))
+            v(:,i) = (0., 1.) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * v(:,i)
         end do
     end subroutine fft_prime_2d_partial_x
 
@@ -18,12 +76,23 @@ contains
     implicit none
         integer, parameter                                 :: n = 128
         complex (kind = 8), dimension(n, n), intent(inout)      :: v
-        integer               :: i
+        integer              :: i, j
 
+        call dft_2d(v)
         do i=1,n
-            call dft_prime_coeff( v(i,:))
+            v(i,:) = (0., 1.) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * v(i,:)
         end do
     end subroutine fft_prime_2d_partial_y
+!------------------------------------------------------------------------------------------
+    subroutine dft_prime_prime_coeff(y)
+    implicit none
+        integer, parameter          :: n = 128
+        complex (kind = 8), intent(inout)                 :: y(n)
+        integer                             :: j
+
+        call dft(y)
+        y = (-1.0) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * y
+    end subroutine dft_prime_prime_coeff
 
     subroutine dft_prime_coeff(y)
     implicit none
@@ -34,7 +103,7 @@ contains
         call dft(y)
         y = (0., 1.) * (/ (j,j=-N/2+1,-1), (j,j=0,N/2-1), 0 /) * y
     end subroutine dft_prime_coeff
-
+!------------------------------------------------------------------------------------------
     subroutine dft(y)
     implicit none
         integer, parameter                  :: n = 128
