@@ -15,7 +15,9 @@ contains
         real ( kind = 8 ), dimension(int(tmax/tplot)+1), intent(out)   :: tdata
         real ( kind = 8 ), dimension(int(tmax/tplot)+1,n,n), intent(out) :: result
 
-        real ( kind = 8 ), dimension(n,n)              :: v, k1,k2,k3,k4,prime_x,prime_y,prime_phi_x,prime_phi_y
+        real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4
+        real ( kind = 8 ), dimension(n,n) :: vx, vy
+        real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y,prime_phi_x,prime_phi_y
 
         integer               :: i, j, plotgap, nplots
         real ( kind = 8 )      :: pi, h, t, dt, curr_max, prev_max
@@ -56,18 +58,26 @@ contains
 
                 call fft_prime_2d_partial_x_run(v, prime_x)
                 call fft_prime_2d_partial_y_run(v, prime_y)
+                call poisson2df(n,n,h,h,v,vx,vy,1)
+
                 k1 = (prime_phi_y * prime_x) - (prime_phi_x * prime_y)
 
                 call fft_prime_2d_partial_x_run(v + dt*k1/2, prime_x)
                 call fft_prime_2d_partial_y_run(v + dt*k1/2, prime_y)
+                call poisson2df(n,n,h,h,v,vx,vy,1)
+
                 k2 = (prime_phi_y * prime_x) - (prime_phi_x * prime_y)
 
                 call fft_prime_2d_partial_x_run(v + dt*k2/2, prime_x)
                 call fft_prime_2d_partial_y_run(v + dt*k2/2, prime_y)
+                call poisson2df(n,n,h,h,v,vx,vy,1)
+
                 k3 = (prime_phi_y * prime_x) - (prime_phi_x * prime_y)
 
                 call fft_prime_2d_partial_x_run(v + dt*k3, prime_x)
                 call fft_prime_2d_partial_y_run(v + dt*k3, prime_y)
+                call poisson2df(n,n,h,h,v,vx,vy,1)
+
                 k4 = (prime_phi_y * prime_x) - (prime_phi_x * prime_y)
 
                 v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
@@ -80,7 +90,7 @@ contains
 !                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
 
 !                PRINT *,"error: maxval: diff", ( maxval(result(i,1:n,1:n)) - maxval(v) )
-
+                return
             end do
 
             curr_max = max_finder_run(maxloc(v), v)
