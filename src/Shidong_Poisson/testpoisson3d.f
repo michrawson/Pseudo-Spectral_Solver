@@ -5,7 +5,7 @@
         complex *16, allocatable :: uc(:,:,:),f0(:,:,:),ut(:,:,:)
         complex *16 ima,d,dn,df
         integer *8 count
-        integer *4 t(2),s,pid,iseed(12)
+        integer *4 t(2),s,pid,iseed(8)
         dimension dran(10)
         data ima/(0.0d0,1.0d0)/
 c

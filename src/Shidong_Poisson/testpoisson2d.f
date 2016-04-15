@@ -5,7 +5,7 @@
         complex *16, allocatable :: uc(:,:),f0(:,:),ut(:,:)
         complex *16 ima,d,dn,df
         integer *8 count
-        integer *4 t(2),s,pid,iseed(12)
+        integer *4 t(2),s,pid,iseed(8)
         dimension dran(4)
         data ima/(0.0d0,1.0d0)/
 c
@@ -119,13 +119,11 @@ c       compute the numerical solution
 c     
         call poisson2d(nx,ny,hx,hy,rn1x,rn1y,rn2x,rn2y,
      &      f0,uc,iprec,ifder,iffrac)
-        call prin2('uc=*',dble(uc),60)
 
 c
 c       compute the analytical solution
 c
         call truesol(x,y,nx,ny,rn1x,rn1y,rn2x,rn2y,ut)
-        call prin2('ut=*',dble(ut),60)
 c
 c       compute the relative l2 error
 c
@@ -204,13 +202,6 @@ c
 
         endif
 
-        do j=1,ny
-           do i=1,nx
-              unn(i,j)=exp(-(x2(i) + y2(j)))
-           enddo
-        enddo
-
-
 	deallocate(x2)
 	deallocate(y2)
 
@@ -255,12 +246,6 @@ c
            enddo
         enddo
 
-        do j=1,ny
-           do i=1,nx
-              unn(i,j)=exp(-(x2(i)+y2(j)))
-           enddo
-        enddo
-
 	deallocate(x2)
 	deallocate(y2)
 
@@ -296,9 +281,7 @@ c
 
         do j=1,ny
            do i=1,nx
-!              f(i,j)=exp(-(x2(i)+y2(j))/a)
-              f(i,j)=exp(-(x2(i)+y2(j))) + exp(-(x2(i)+y2(j)))
-!              f(i,j)= cos(x(i)) + cos(y(j))
+              f(i,j)=exp(-(x2(i)+y2(j))/a)
            enddo
         enddo
 
@@ -337,9 +320,8 @@ c
 
         do j=1,ny
            do i=1,nx
-!              f(i,j)=(rtmp+4*(x2(i)/ax2+y2(j)/ay2))
-!     &            *exp(-(x2(i)/ax+y2(j)/ay))
-              f(i,j)=exp(-(x2(i)+y2(j))) + exp(-(x2(i)+y2(j)))
+              f(i,j)=(rtmp+4*(x2(i)/ax2+y2(j)/ay2))
+     &            *exp(-(x2(i)/ax+y2(j)/ay))
            enddo
         enddo
 

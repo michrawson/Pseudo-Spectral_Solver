@@ -60,14 +60,12 @@ c       compute the numerical solution
 c     
         call poisson2df(nx,ny,hx,hy,f0,ux,uy,iprec)
         call prin2('ux=*',dble(ux),60)
-        call prin2('uy=*',dble(uy),60)
 
 c
 c       compute the analytical solution
 c
         call truesol(x,y,nx,ny,uxt,uyt)
         call prin2('uxt=*',dble(uxt),60)
-        call prin2('uyt=*',dble(uyt),60)
 
 c
 c       compute the relative l2 error
@@ -108,10 +106,8 @@ c
 
         do j=1,ny
            do i=1,nx
-!              r=sqrt(x2(i)+y2(j))
-!              call uspec(x(i),y(j),a,u,ux(i,j),uy(i,j))
-              ux(i,j) = -2.0*x(i)*exp(-(x2(i)+y2(j)))
-              uy(i,j) = -2.0*y(j)*exp(-(x2(i)+y2(j)))
+              r=sqrt(x2(i)+y2(j))
+              call uspec(x(i),y(j),a,u,ux(i,j),uy(i,j))
            enddo
         enddo
 
@@ -179,9 +175,7 @@ c
 
         do j=1,ny
            do i=1,nx
-         f(i,j)= 2.0*exp(-(x2(i)+y2(j))) - 4.0*x2(i)*exp(-(x2(i)+y2(j)))
-     &         + 2.0*exp(-(x2(i)+y2(j))) - 4.0*y2(j)*exp(-(x2(i)+y2(j)))
-!                f(i,j) = cos(x(i)) + cos(y(j))
+              f(i,j)=exp(-(x2(i)+y2(j))/a)
            enddo
         enddo
 
