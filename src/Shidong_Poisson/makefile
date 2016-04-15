@@ -24,10 +24,9 @@ FC      = gfortran
 
 #DEBUG	= -quad
 
-FFLAGS  =  -O2 -c -fbounds-check -fbacktrace \
-        -Wall -Wextra -Wconversion -pedantic -fcheck=all
+FFLAGS  =  -O2 -c 
 
-LIBDIR=/Users/mich/github/Pseudo-Spectral_Solver/fftw-3.3.4/.libs
+LIBDIR=../../fftw-3.3.4/.libs
 
 LIBS 	= -L$(LIBDIR) -lfftw3 -lm
 # -lfftw3f
@@ -57,6 +56,7 @@ AROBJS 	=dfftpack.o next235.o nufft2df90.o\
 	eone.o erfc.o besei0.o besei1.o calcei.o calci0.o calci1.o
 
 nufftlib:  $(AROBJS)
+	rm -f $(NUFFTLIB)
 	$(AR) $(ARFLAGS) $(NUFFTLIB) $(AROBJS) 
 	$(RANLIB) $(NUFFTLIB)
 
@@ -82,5 +82,5 @@ poisson2df: poisson2df.o
 .SUFFIXES: .o .f .f90
 
 clean:
-	$(RM) -f *.o *~ \#* fort.* *.exe $(PROJECT)
+	$(RM) -f *.o *~ \#* fort.* *.exe $(PROJECT) 
 

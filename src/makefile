@@ -9,7 +9,7 @@ MOD_SRC=$(wildcard lib/*.f95)
 MODS=$(MOD_SRC:.f95=.mod)
 
 main.tsk : $(MODS) $(OBJS) 
-	( cd ./Shidong_Poisson; $(MAKE) poisson2df )
+	( cd ./Shidong_Poisson; $(MAKE) nufftlib; $(MAKE) clean; $(MAKE) poisson2df )
 	gfortran $(FLGS) \
 				-L../fftpack5.1/lib \
 				-L../fftw-3.3.4/.libs \
