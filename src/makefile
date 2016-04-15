@@ -1,6 +1,6 @@
 #-std=f95
-FLGS=-g -I. -fbounds-check -fbacktrace \
-        -Wall -Wextra -Wconversion -pedantic  -freal-4-real-8 -fcheck=all
+FLGS=-O2 -I. -freal-4-real-8
+FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
 
 SRC=$(wildcard *.f95)
 OBJS=$(SRC:.f95=.o)
