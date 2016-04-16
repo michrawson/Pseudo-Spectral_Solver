@@ -55,7 +55,7 @@ AROBJS 	=dfftpack.o next235.o nufft2df90.o\
 	second-r8.o legeexps.o prini.o hkrand.o dlaran.o\
 	eone.o erfc.o besei0.o besei1.o calcei.o calci0.o calci1.o
 
-nufftlib:  $(AROBJS)
+libnufft.a :  $(AROBJS)
 	rm -f $(NUFFTLIB)
 	$(AR) $(ARFLAGS) $(NUFFTLIB) $(AROBJS) 
 	$(RANLIB) $(NUFFTLIB)
