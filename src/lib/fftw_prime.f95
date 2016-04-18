@@ -3,43 +3,43 @@ implicit none
 
 contains
 
-    subroutine fft_prime_2d_partial_x_run(v, v_prime)
+    subroutine fft_prime_2d_partial_x_run(n, v, v_prime)
     implicit none
-        integer, parameter                                 :: n = 128
+        integer, intent(in)                                :: n
         real ( kind = 8 ), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
         integer               :: i
 
         do i=1,n
-            call fft_prime_run( v(:,i), v_prime(:,i))
+            call fft_prime_run( n, v(:,i), v_prime(:,i))
         end do
 
     end subroutine fft_prime_2d_partial_x_run
 
-    subroutine fft_prime_2d_partial_y_run(v, v_prime)
+    subroutine fft_prime_2d_partial_y_run(n, v, v_prime)
     implicit none
-        integer, parameter                                 :: n = 128
+        integer, intent(in)                                :: n
         real ( kind = 8 ), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
         integer               :: i
 
         do i=1,n
-            call fft_prime_run( v(i, :), v_prime(i, :))
+            call fft_prime_run( n, v(i, :), v_prime(i, :))
         end do
 
     end subroutine fft_prime_2d_partial_y_run
 
-    subroutine fft_prime_2d_run(v, v_prime)
+    subroutine fft_prime_2d_run(n, v, v_prime)
     implicit none
-        integer, parameter                                 :: n = 128
+        integer, intent(in)                                :: n
         real ( kind = 8 ), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
         real ( kind = 8 ), dimension(n, n)                 :: v_temp_x, v_temp_y
         integer               :: i, j
 
         do i=1,n
-            call fft_prime_run( v(:,i), v_temp_x(:,i))
-            call fft_prime_run( v(i,:), v_temp_y(i,:))
+            call fft_prime_run( n, v(:,i), v_temp_x(:,i))
+            call fft_prime_run( n, v(i,:), v_temp_y(i,:))
         end do
 
         do i=1,n
@@ -50,9 +50,9 @@ contains
 
     end subroutine fft_prime_2d_run
 
-    subroutine fft_prime_run(v, v_prime)
+    subroutine fft_prime_run(n, v, v_prime)
     implicit none
-        integer, parameter                              :: n = 128
+        integer, intent(in)                                :: n
         real ( kind = 8 ), dimension(n), intent(in)     :: v
         real ( kind = 8 ), dimension(n), intent(inout)  :: v_prime
         integer ( kind = 4 ), parameter :: fftw_forward = -1

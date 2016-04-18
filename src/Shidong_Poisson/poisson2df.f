@@ -38,9 +38,11 @@ c
         implicit real *8 (a-h,o-z)
         complex *16 ux(nx,ny),uy(nx,ny),f0(nx,ny)
         real *8, allocatable :: x(:),y(:)
-        complex *16, allocatable :: ux2(:,:),uy2(:,:)
+        complex *16  :: ux2(nx,ny),uy2(nx,ny)
+!        real *8      :: start, finish
         data pi/3.141592653589793238462643383279502884197169399d0/
-        
+
+!        call cpu_time(start)
 
         dk=min(1.0d0/hx/nx,1.0d0/hy/ny)
 
@@ -70,8 +72,8 @@ c        call prin2('R1=*',R1,1)
 c	nr=50
 c	nphi=50
 
-        allocate( ux2(nx,ny) )
-        allocate( uy2(nx,ny) )
+!        allocate( ux2(nx,ny) )
+!        allocate( uy2(nx,ny) )
         call uradpart(nr,nphi,hx,hy,nx,ny,R0,R1,f0,ux2,uy2)
 
         ux=ux+ux2
@@ -81,6 +83,9 @@ c	nphi=50
 
         ux = ux*d
         uy = uy*d
+
+!        call cpu_time(finish)
+!        print '("Time = ",f6.3," seconds.")',finish-start
 
         return
         end
@@ -195,6 +200,15 @@ c
 
         uy=fhat2((/(ncx+i, i=1,nx)/),(/(ncy+i, i=1,ny)/))
         
+        deallocate( f1)
+        deallocate( f2)
+        deallocate( fhat)
+        deallocate( fhatx)
+        deallocate( fhaty)
+        deallocate( fhat2)
+        deallocate( rk1)
+        deallocate( rk2)
+
         return
         end
 c
@@ -284,6 +298,20 @@ c
 
 	call prin2('after nufft2d1, time(sec)=*',t2-t1,1)
 
+
+        deallocate( r )
+        deallocate( wr )
+        deallocate( phi )
+        deallocate( wphi )
+        deallocate(x1)
+        deallocate(y1)
+        deallocate(f1)
+        deallocate( rk1)
+        deallocate( rk2)
+        deallocate( fhat)
+        deallocate( fhatx)
+        deallocate( fhaty)
+
         return
         end
 c
@@ -354,6 +382,13 @@ c
         fhat=fhat*hx*hy
 
 	call prin2('after nufft2d2, time (sec)=*',t2-t1,1)
+
+        deallocate(x1)
+        deallocate(y1)
+        deallocate(f1)
+
+        deallocate( rk1)
+        deallocate( rk2)
 
         return
         end

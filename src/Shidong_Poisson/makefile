@@ -24,7 +24,11 @@ FC      = gfortran
 
 #DEBUG	= -quad
 
-FFLAGS  =  -O2 -c 
+FFLAGS  =  -O3 -c 
+
+# -g -fbacktrace 
+# -fbounds-check
+# -fcheck=all
 
 LIBDIR=../../fftw-3.3.4/.libs
 

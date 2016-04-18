@@ -1,9 +1,12 @@
 #-std=f95
-FLGS=-O2 -I. -freal-4-real-8
-FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
+FLGS=-O3 -I. -freal-4-real-8
+#FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
 
 SRC=$(wildcard *.f95)
 OBJS=$(SRC:.f95=.o)
+
+LIB_SRC=$(wildcard lib/*.f95)
+LIB_OBJS=$(LIB_SRC:.f95=.o)
 
 MOD_SRC=$(wildcard lib/*.f95)
 MODS=$(MOD_SRC:.f95=.mod)
@@ -16,18 +19,21 @@ main.tsk : $(MODS) $(OBJS)
                 -lfftpack -lfftw3 \
                 Shidong_Poisson/*.o $(MODS) $(OBJS) Shidong_Poisson/*.a -o main.tsk
 
-fmain : $(SRC)
+fmain : Shidong_Poisson/poisson2df.o
 	f2py --fcompiler=gfortran --debug-capi \
 				-L../fftpack5.1/lib \
 				-L../fftw-3.3.4/.libs \
                 -lfftpack -lfftw3 \
-                -c lib/*.f95 Shidong_Poisson/*.o Shidong_Poisson/*.a \
+                -c lib/*.f95 Shidong_Poisson/poisson2df.o Shidong_Poisson/*.a \
                 -m fmain
 
 %.mod : %.f95
 	gfortran -c $(FLGS) $< -o $@
 
 %.o : %.f95
+	gfortran -c $(FLGS) $< -o $@
+
+%.o : %.f
 	gfortran -c $(FLGS) $< -o $@
 
 clean:
