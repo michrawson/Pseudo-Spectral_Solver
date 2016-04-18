@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 # print
 # print fmain.variable_coeff_wave_eq.__doc__
 
-nplots = 8
-plotgap = 25
+nplots = 16
+plotgap = 12
 
 sigma1 = 2.52
 sigma2 = 13.4**1.5
