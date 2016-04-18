@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 # print
 # print fmain.variable_coeff_wave_eq.__doc__
 
-nplots = 5
+nplots = 8
 plotgap = 25
 
 sigma1 = 2.52
 sigma2 = 13.4**1.5
 n = 64
-dt = 1./2.**3
+dt = 1./2.**4
 delta2 = 0.8
 
 x, y, tdata, result = fmain.variable_coeff_wave_eq_pseudo_rk.variable_coeff_wave_eq_pseudo_rk_run(
