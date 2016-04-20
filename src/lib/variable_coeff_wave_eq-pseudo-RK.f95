@@ -4,12 +4,12 @@ implicit none
 contains
 
     subroutine variable_coeff_wave_eq_pseudo_rk_run( nplots, plotgap, sigma1, sigma2, dt, delta2, &
-                                                    n, x, y, tdata, result)
+                                                     h, n, x, y, tdata, result)
     use fftw_prime
     use max_finder
     implicit none
         integer, intent(in)          ::  nplots, plotgap
-        real ( kind = 8 ), intent(in) :: sigma1, sigma2, dt, delta2
+        real ( kind = 8 ), intent(in) :: sigma1, sigma2, dt, delta2, h
         integer, intent(in)          :: n
         real ( kind = 8 ), dimension(n), intent(out)                   :: x, y
         real ( kind = 8 ), dimension(nplots+1), intent(out)   :: tdata
@@ -22,15 +22,14 @@ contains
         real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y
 
         integer               :: i, j
-        real ( kind = 8 )      :: pi, h, t, curr_max, prev_max
+        real ( kind = 8 )      :: pi, t, curr_max, prev_max
 
         pi = 4.*atan(1.)
-        h = 50.0/N
         x = h*(/ (j-n/2,j=1,N) /)
         y = h*(/ (j-n/2,j=1,N) /)
         t = 0
 
-        v = 0
+!        v = 0
         do i = 1,n
             do j = 1,n
                 v(i,j) = exp(-((x(i)**2.)/sigma1)-((y(j)**2.)/sigma2))
