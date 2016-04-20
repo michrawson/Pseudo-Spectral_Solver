@@ -30,9 +30,13 @@ contains
         y = h*(/ (j-n/2,j=1,N) /)
         t = 0
 
-        do i=1,n
+        v = 0
+        do i = 1,n
             do j = 1,n
                 v(i,j) = exp(-((x(i)**2.)/sigma1)-((y(j)**2.)/sigma2))
+!                if (x(i) <= 15 .AND. x(i) >= -15) then
+!                    v(i,j) = exp(-(y(j)**2.)*(-4.0*log(10.0**(-3)))/(1 + 0.025*cos(1.68*x(j)))**2.0)
+!                end if
             end do
         end do
 

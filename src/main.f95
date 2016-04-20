@@ -3,7 +3,7 @@ program main
     use variable_coeff_wave_eq_pseudo_rk
 
     implicit none
-    integer, parameter           :: n = 42
+    integer, parameter           :: n = 64
     integer, parameter           :: nplots = 2
 
     real ( kind = 8 ), dimension(nplots+1)      :: tdata
