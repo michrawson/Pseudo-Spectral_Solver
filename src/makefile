@@ -8,16 +8,16 @@ OBJS=$(SRC:.f95=.o)
 LIB_SRC=$(wildcard lib/*.f95)
 LIB_OBJS=$(LIB_SRC:.f95=.o)
 
-MOD_SRC=$(wildcard lib/*.f95)
-MODS=$(MOD_SRC:.f95=.mod)
+LIB_MOD_SRC=$(wildcard lib/*.f95)
+LIB_MODS=$(LIB_MOD_SRC:.f95=.mod)
 
-main.tsk : $(MODS) $(OBJS) 
+main.tsk : $(LIB_OBJS) $(OBJS)
 	( cd ./Shidong_Poisson; $(MAKE) libnufft.a; $(MAKE) clean; $(MAKE) poisson2df )
 	gfortran $(FLGS) \
 				-L../fftpack5.1/lib \
 				-L../fftw-3.3.4/.libs \
                 -lfftpack -lfftw3 \
-                Shidong_Poisson/*.o $(MODS) $(OBJS) Shidong_Poisson/*.a -o main.tsk
+                Shidong_Poisson/*.o $(LIB_OBJS) $(OBJS) Shidong_Poisson/*.a -o main.tsk
 
 fmain : Shidong_Poisson/poisson2df.o
 	f2py --fcompiler=gfortran --debug-capi \
@@ -27,9 +27,6 @@ fmain : Shidong_Poisson/poisson2df.o
                 -c lib/*.f95 Shidong_Poisson/poisson2df.o Shidong_Poisson/*.a \
                 -m fmain
 
-%.mod : %.f95
-	gfortran -c $(FLGS) $< -o $@
-
 %.o : %.f95
 	gfortran -c $(FLGS) $< -o $@
 
@@ -38,4 +35,5 @@ fmain : Shidong_Poisson/poisson2df.o
 
 clean:
 	( cd ./Shidong_Poisson; $(MAKE) clean )
-	rm -rf lib/*.mod lib/*.o *.mod *.o *.so *.tsk *.tsk.dSYM
+	( cd lib; rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM )
+	rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM

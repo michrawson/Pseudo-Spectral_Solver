@@ -42,7 +42,7 @@ c
 !        real *8      :: start, finish
         data pi/3.141592653589793238462643383279502884197169399d0/
 
-        call cpu_time(start)
+!        call cpu_time(start)
 
         dk=min(1.0d0/hx/nx,1.0d0/hy/ny)
 
@@ -84,8 +84,8 @@ c	nphi=50
         ux = ux*d
         uy = uy*d
 
-        call cpu_time(finish)
-        print '("poisson2df Time = ",f6.3," seconds.")',finish-start
+!        call cpu_time(finish)
+!        print '("poisson2df Time = ",f6.3," seconds.")',finish-start
 
         return
         end
@@ -97,13 +97,15 @@ c
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
-        complex *16 fval(nx,ny),fhat(nx,ny)
+        complex *16 fval(nx,ny),temp(nx,ny),fhat(nx,ny)
 
         t1=second()
+        temp = fval
         call dfftw_plan_dft_2d(plan, nx,ny, fval,fhat,
-     &      FFTW_FORWARD, FFTW_MEASURE)
+     &      FFTW_FORWARD, fftw_estimate)
+        fval = temp
         call dfftw_execute_dft(plan, fval, fhat)
-!        call dfftw_destroy_plan(plan)
+        call dfftw_destroy_plan(plan)
         t2=second()
 
         call prin2('after forward fft, time (sec)=*',t2-t1,1)
@@ -118,13 +120,15 @@ c
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
-        complex *16 fval(nx,ny),fhat(nx,ny)
+        complex *16 fval(nx,ny),fhat(nx,ny),temp(nx,ny)
 
         t1=second()
+        temp = fhat
         call dfftw_plan_dft_2d(plan, nx,ny, fhat,fval,
-     &      FFTW_BACKWARD, FFTW_MEASURE)
+     &      FFTW_BACKWARD, fftw_estimate)
+        fhat = temp
         call dfftw_execute_dft(plan, fhat, fval)
-!        call dfftw_destroy_plan(plan)
+        call dfftw_destroy_plan(plan)
 
         nt=nx*ny
         fval=fval/nt

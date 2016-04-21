@@ -22,7 +22,7 @@ contains
         real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y
 
         integer               :: i, j
-        real ( kind = 8 )      :: pi, t, curr_max, prev_max
+        real ( kind = 8 )      :: pi, t, curr_max, prev_max, start, finish
 
         pi = 4.*atan(1.)
         x = h*(/ (j-n/2,j=1,N) /)
@@ -54,8 +54,11 @@ contains
 
                 t = t+dt
 
+!call cpu_time(start)
                 call fft_prime_2d_partial_x_run(n, v, prime_x)
                 call fft_prime_2d_partial_y_run(n, v, prime_y)
+!call cpu_time(finish)
+!print '("fftw Time = ",f6.3," seconds.")',finish-start
 
                 temp = v
                 vx=0
@@ -64,8 +67,11 @@ contains
 
                 k1 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
+!call cpu_time(start)
                 call fft_prime_2d_partial_x_run(n, v + dt*k1/2.0, prime_x)
                 call fft_prime_2d_partial_y_run(n, v + dt*k1/2.0, prime_y)
+!call cpu_time(finish)
+!print '("fftw Time = ",f6.3," seconds.")',finish-start
 
                 temp = v + dt*k1/2.0
                 vx=0
@@ -74,8 +80,11 @@ contains
 
                 k2 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
+!call cpu_time(start)
                 call fft_prime_2d_partial_x_run(n, v + dt*k2/2.0, prime_x)
                 call fft_prime_2d_partial_y_run(n, v + dt*k2/2.0, prime_y)
+!call cpu_time(finish)
+!print '("fftw Time = ",f6.3," seconds.")',finish-start
 
                 temp = v + dt*k2/2.0
                 vx=0
@@ -84,8 +93,11 @@ contains
 
                 k3 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
+!call cpu_time(start)
                 call fft_prime_2d_partial_x_run(n, v + dt*k3, prime_x)
                 call fft_prime_2d_partial_y_run(n, v + dt*k3, prime_y)
+!call cpu_time(finish)
+!print '("fftw Time = ",f6.3," seconds.")',finish-start
 
                 temp = v + dt*k3
                 vx=0
