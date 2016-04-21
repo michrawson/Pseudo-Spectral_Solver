@@ -1,15 +1,12 @@
 #-std=f95
-FLGS=-Ofast -march=native -I. -freal-4-real-8
-#FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
+FLGS=-Ofast -I. -freal-4-real-8
+# FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
 
 SRC=$(wildcard *.f95)
 OBJS=$(SRC:.f95=.o)
 
 LIB_SRC=$(wildcard lib/*.f95)
 LIB_OBJS=$(LIB_SRC:.f95=.o)
-
-LIB_MOD_SRC=$(wildcard lib/*.f95)
-LIB_MODS=$(LIB_MOD_SRC:.f95=.mod)
 
 main.tsk : $(LIB_OBJS) $(OBJS)
 	( cd ./Shidong_Poisson; $(MAKE) libnufft.a; $(MAKE) clean; $(MAKE) poisson2df )
@@ -36,4 +33,4 @@ fmain : Shidong_Poisson/poisson2df.o
 clean:
 	( cd ./Shidong_Poisson; $(MAKE) clean )
 	( cd lib; rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM )
-	rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM
+	rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM *.so.dSYM

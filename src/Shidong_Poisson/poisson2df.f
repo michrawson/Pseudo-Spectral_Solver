@@ -37,8 +37,9 @@ c       WARNING: only works even nx and ny now!
 c
         implicit real *8 (a-h,o-z)
         complex *16 ux(nx,ny),uy(nx,ny),f0(nx,ny)
-        real *8, allocatable :: x(:),y(:)
-        complex *16, allocatable :: ux2(:,:),uy2(:,:)
+!        real *8 :: x(:),y(:)
+        complex *16 :: ux2(nx,ny),uy2(nx,ny)
+        integer *4 n1, n2
         data pi/3.141592653589793238462643383279502884197169399d0/
         
 
@@ -57,7 +58,11 @@ c        call prin2('R1=*',R1,1)
            kfac=2
         endif
 
-        call ufftpart(hx,hy,nx,ny,kfac,R0,R1,f0,ux,uy)
+        n1=nx*kfac
+        n2=ny*kfac
+        ux(1,1)=0
+        uy(1,1)=0
+        call ufftpart(hx,hy,nx,ny,n1,n2,kfac,R0,R1,f0,ux,uy)
 
         if (iprec .eq. 1) then
            nr=60
@@ -70,9 +75,9 @@ c        call prin2('R1=*',R1,1)
 c	nr=50
 c	nphi=50
 
-        allocate( ux2(nx,ny) )
-        allocate( uy2(nx,ny) )
-        call uradpart(nr,nphi,hx,hy,nx,ny,R0,R1,f0,ux2,uy2)
+        !allocate( ux2(nx,ny) )
+        !allocate( uy2(nx,ny) )
+        call uradpart(nr,nphi,nphi*nr,hx,hy,nx,ny,R0,R1,f0,ux2,uy2)
 
         ux=ux+ux2
         uy=uy+uy2
@@ -101,7 +106,7 @@ c
         call dfftw_destroy_plan(plan)
         t2=second()
 
-        call prin2('after forward fft, time (sec)=*',t2-t1,1)
+!        call prin2('after forward fft, time (sec)=*',t2-t1,1)
 
         return
         end
@@ -126,7 +131,7 @@ c
 
         t2=second()
 
-        call prin2('after backward fft, time (sec)=*',t2-t1,1)
+!        call prin2('after backward fft, time (sec)=*',t2-t1,1)
 
         return
         end
@@ -134,32 +139,33 @@ c
 c
 c
 c
-        subroutine ufftpart(hx,hy,nx,ny,kfac,R0,R1,f0,ux,uy)
+        subroutine ufftpart(hx,hy,nx,ny,n1,n2,kfac,R0,R1,f0,ux,uy)
         implicit real *8 (a-h,o-z)
-        real *8, allocatable :: rk1(:),rk2(:)
+        integer *4 n1, n2
+        real *8 :: rk1(n1),rk2(n2)
         parameter (pi=3.141592653589793d0)
-        complex *16 ux(nx,ny),uy(nx,ny),f0(nx,ny),ima
-        complex *16, allocatable :: f1(:,:),fhatx(:,:),fhaty(:,:)
-	complex *16, allocatable :: f2(:,:),fhat(:,:),fhat2(:,:)
+        complex *16, intent(inout) :: ux(nx,ny),uy(nx,ny),f0(nx,ny)
+        complex *16 :: f1(n1,n2),fhatx(n1,n2),fhaty(n1,n2),ima
+	complex *16 :: f2(n1,n2),fhat(n1,n2),fhat2(n1,n2)
         data ima/(0.0d0,1.0d0)/
 
-        n1=nx*kfac
-        n2=ny*kfac
+!        n1=nx*kfac
+!        n2=ny*kfac
 
-        allocate( f1(n1,n2) )
-        allocate( f2(n1,n2) )
-        allocate( fhat(n1,n2) )
-        allocate( fhatx(n1,n2) )
-        allocate( fhaty(n1,n2) )
-        allocate( fhat2(n1,n2) )
+        !allocate( f1(n1,n2) )
+        !allocate( f2(n1,n2) )
+        !allocate( fhat(n1,n2) )
+        !allocate( fhatx(n1,n2) )
+        !allocate( fhaty(n1,n2) )
+        !allocate( fhat2(n1,n2) )
 
         call zeropad(nx,ny,kfac,f0,f1)
         call ifftshift2(n1,n2,f1,f2)
         call fft2(n1,n2,f2,fhat2)
         call ifftshift2(n1,n2,fhat2,fhat)
 
-        allocate( rk1(n1) )
-        allocate( rk2(n2) )
+        !allocate( rk1(n1) )
+        !allocate( rk2(n2) )
 
         rk1=(/ (k, k=-n1/2,n1/2-1) /)
         rk2=(/ (k, k=-n2/2,n2/2-1) /)
@@ -217,38 +223,38 @@ c
 c
 c
 c
-        subroutine uradpart(nr,nphi,hx,hy,nx,ny,R0,R1,f0,ux2,uy2)
+        subroutine uradpart(nr,nphi,nt,hx,hy,nx,ny,R0,R1,f0,ux2,uy2)
         implicit real *8 (a-h,o-z)
-        real *8, allocatable :: r(:),phi(:),wr(:),wphi(:)
-        real *8, allocatable :: rk1(:,:),rk2(:,:)
-	real *8, allocatable :: x1(:),y1(:)
+        real *8 :: r(nr),phi(nphi),wr(nr),wphi(nphi)
+        real *8 :: rk1(nphi,nr),rk2(nphi,nr)
+	real *8 :: x1(nt),y1(nt)
         parameter (pi=3.141592653589793d0)
         complex *16 ux2(nx,ny),uy2(nx,ny),f0(nx,ny),ima
-        complex *16, allocatable :: fhat(:,:),f1(:)
-        complex *16, allocatable :: fhatx(:,:),fhaty(:,:)
+        complex *16 :: fhat(nphi,nr),f1(nt)
+        complex *16 :: fhatx(nphi,nr),fhaty(nphi,nr)
         data ima/(0.0d0,1.0d0)/
 
-        allocate( r(nr) )
-        allocate( wr(nr) )
+        !allocate( r(nr) )
+        !allocate( wr(nr) )
 
-        allocate( phi(nphi) )
-        allocate( wphi(nphi) )
+        !allocate( phi(nphi) )
+        !allocate( wphi(nphi) )
 
-	nt=nphi*nr
-	allocate(x1(nt))
-	allocate(y1(nt))
+!	nt=nphi*nr
+	!allocate(x1(nt))
+	!allocate(y1(nt))
 
-	allocate(f1(nt))
+	!allocate(f1(nt))
 
 
-        allocate( rk1(nphi,nr) )
-        allocate( rk2(nphi,nr) )
-        allocate( fhat(nphi,nr) )
-        allocate( fhatx(nphi,nr) )
-        allocate( fhaty(nphi,nr) )
+        !allocate( rk1(nphi,nr) )
+        !allocate( rk2(nphi,nr) )
+        !allocate( fhat(nphi,nr) )
+        !allocate( fhatx(nphi,nr) )
+        !allocate( fhaty(nphi,nr) )
 
         call rnodes2(nr,nphi,R1,r,wr,phi,wphi)
-        call fhateval(r,phi,nr,nphi,nx,ny,f0,hx,hy,fhat)
+        call fhateval(r,phi,nr,nphi,nr*nphi,nx,ny,f0,hx,hy,fhat)
 
         cx=2*pi*hx
         cy=2*pi*hy
@@ -282,7 +288,7 @@ c
         ux2=ux2*nt
         uy2=uy2*nt
 
-	call prin2('after nufft2d1, time(sec)=*',t2-t1,1)
+!	call prin2('after nufft2d1, time(sec)=*',t2-t1,1)
 
         return
         end
@@ -314,25 +320,25 @@ c
 c
 c
 c
-        subroutine fhateval(r,phi,nr,nphi,nx,ny,fx,hx,hy,fhat)
+        subroutine fhateval(r,phi,nr,nphi,nt,nx,ny,fx,hx,hy,fhat)
         implicit real *8 (a-h,o-z)
         dimension r(nr),phi(nphi)
-        real *8, allocatable :: rk1(:,:),rk2(:,:)
-	real *8, allocatable :: x1(:),y1(:)
+        real *8 :: rk1(nphi,nr),rk2(nphi,nr)
+	real *8 :: x1(nt),y1(nt)
         parameter (pi=3.141592653589793d0)
         complex *16 fhat(nphi,nr),fx(nx,ny)
-	complex *16, allocatable :: f1(:)
+	complex *16 :: f1(nt)
 
         cx=2*pi*hx
         cy=2*pi*hy
 
-        nt=nr*nphi
-	allocate(x1(nt))
-	allocate(y1(nt))
-	allocate(f1(nt))
+!        nt=nr*nphi
+	!allocate(x1(nt))
+	!allocate(y1(nt))
+	!allocate(f1(nt))
 
-        allocate( rk1(nphi,nr) )
-        allocate( rk2(nphi,nr) )
+        !allocate( rk1(nphi,nr) )
+        !allocate( rk2(nphi,nr) )
 
         do j=1,nr
            do i=1,nphi
@@ -353,7 +359,7 @@ c
 	fhat=reshape(f1,(/nphi,nr/))
         fhat=fhat*hx*hy
 
-	call prin2('after nufft2d2, time (sec)=*',t2-t1,1)
+!	call prin2('after nufft2d2, time (sec)=*',t2-t1,1)
 
         return
         end
