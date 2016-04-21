@@ -24,7 +24,7 @@ FC      = gfortran
 
 #DEBUG	= -quad
 
-FFLAGS  =  -O3 -c 
+FFLAGS  =  -Ofast -march=native -c 
 
 # -g -fbacktrace -fbounds-check -fcheck=all
 
