@@ -1,5 +1,5 @@
 #-std=f95
-FLGS=-Ofast -I. -freal-4-real-8
+FLGS=-Ofast -march=native -I. -freal-4-real-8
 # FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
 
 SRC=$(wildcard *.f95)
@@ -17,6 +17,7 @@ main.tsk : $(LIB_OBJS) $(OBJS)
                 Shidong_Poisson/*.o $(LIB_OBJS) $(OBJS) Shidong_Poisson/*.a -o main.tsk
 
 fmain : Shidong_Poisson/poisson2df.o
+	rm -f lib/variable_coeff_wave_eq-pseudo-RK.o
 	f2py --fcompiler=gfortran --debug-capi \
 				-L../fftpack5.1/lib \
 				-L../fftw-3.3.4/.libs \
