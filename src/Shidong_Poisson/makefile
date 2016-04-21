@@ -26,9 +26,7 @@ FC      = gfortran
 
 FFLAGS  =  -O3 -c 
 
-# -g -fbacktrace 
-# -fbounds-check
-# -fcheck=all
+# -g -fbacktrace -fbounds-check -fcheck=all
 
 LIBDIR=../../fftw-3.3.4/.libs
 
