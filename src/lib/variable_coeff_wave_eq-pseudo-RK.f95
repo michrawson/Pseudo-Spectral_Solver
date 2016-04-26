@@ -17,7 +17,7 @@ contains
 
 
         complex ( kind = 8 ), dimension(n,n) :: temp
-        real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4
+        real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4,k5,k6
         complex ( kind = 8 ), dimension(n,n) :: vx, vy
         real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y
 
@@ -54,64 +54,72 @@ contains
 
                 t = t+dt
 
-!call cpu_time(start)
-                call fft_prime_2d_partial_x_run(n, v, prime_x)
-                call fft_prime_2d_partial_y_run(n, v, prime_y)
-!call cpu_time(finish)
-!print '("fftw Time = ",f6.3," seconds.")',finish-start
-
                 temp = v
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k1 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-!call cpu_time(start)
-                call fft_prime_2d_partial_x_run(n, v + dt*k1/2.0, prime_x)
-                call fft_prime_2d_partial_y_run(n, v + dt*k1/2.0, prime_y)
-!call cpu_time(finish)
-!print '("fftw Time = ",f6.3," seconds.")',finish-start
-
-                temp = v + dt*k1/2.0
+                temp = v + dt*k1/3.0
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+!                temp = v + dt*k1/2.0
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k2 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-!call cpu_time(start)
-                call fft_prime_2d_partial_x_run(n, v + dt*k2/2.0, prime_x)
-                call fft_prime_2d_partial_y_run(n, v + dt*k2/2.0, prime_y)
-!call cpu_time(finish)
-!print '("fftw Time = ",f6.3," seconds.")',finish-start
+                temp = v + dt*(4.0*k1+6.0*k2)/25.0
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
 
-                temp = v + dt*k2/2.0
+!                temp = v + dt*k2/2.0
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k3 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-!call cpu_time(start)
-                call fft_prime_2d_partial_x_run(n, v + dt*k3, prime_x)
-                call fft_prime_2d_partial_y_run(n, v + dt*k3, prime_y)
-!call cpu_time(finish)
-!print '("fftw Time = ",f6.3," seconds.")',finish-start
+                temp = v + dt*(k1-12.0*k2+15.0*k3)/4.0
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
 
-                temp = v + dt*k3
+!                temp = v + dt*k3
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k4 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
+                temp = v + dt*(6.0*k1+90.0*k2-50.0*k3+8.0*k4)/81.0
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                vx=0
+                vy=0
+                call poisson2df(n,n,h,h,temp,vx,vy,1)
+
+                k5 = delta2*(-(vy * prime_x) + (vx * prime_y))
+
+                temp = v + dt*(6.0*k1+36.0*k2+10.0*k3+8.0*k4)/75.0
+                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                vx=0
+                vy=0
+                call poisson2df(n,n,h,h,temp,vx,vy,1)
+
+                k6 = delta2*(-(vy * prime_x) + (vx * prime_y))
+
+                v = v + dt/192.0*(23.0*k1 + 125.0*k3 - 81.0*k5 + 125.0*k6)
+!                v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
+!                v = v + dt/6.0*(k1 + 4.0*k2 + k3)
 
                 if (maxval(-result(i,1:n,1:n)) < 0) then
                     PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
                 end if
-
 
 !                PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
 !                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))

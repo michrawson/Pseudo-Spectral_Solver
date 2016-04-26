@@ -1,5 +1,7 @@
 #-std=f95
-FLGS=-Ofast -march=native -I. -freal-4-real-8
+FLGS=-I. -freal-4-real-8 
+FLGS+=-Ofast -march=native
+# FLGS+=-O3 -march=native
 # FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra -Wconversion -pedantic -fcheck=all
 
 SRC=$(wildcard *.f95)

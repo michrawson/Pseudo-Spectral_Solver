@@ -92,11 +92,12 @@ c
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
-        complex *16 fval(nx,ny),fhat(nx,ny)
+        complex *16 fval(nx,ny),temp(nx,ny),fhat(nx,ny)
 
         t1=second()
-        call dfftw_plan_dft_2d(plan, nx,ny, fval,fhat,
-     &      FFTW_FORWARD, FFTW_ESTIMATE)
+        call dfftw_plan_dft_2d(plan, nx,ny, temp,fhat,
+     &      FFTW_FORWARD, FFTW_MEASURE)
+        temp = fval
         call dfftw_execute_dft(plan, fval, fhat)
         call dfftw_destroy_plan(plan)
         t2=second()
@@ -113,11 +114,12 @@ c
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
-        complex *16 fval(nx,ny),fhat(nx,ny)
+        complex *16 fval(nx,ny),temp(nx,ny),fhat(nx,ny)
 
         t1=second()
-        call dfftw_plan_dft_2d(plan, nx,ny, fhat,fval,
-     &      FFTW_BACKWARD, FFTW_ESTIMATE)
+        call dfftw_plan_dft_2d(plan, nx,ny, temp,fval,
+     &      FFTW_BACKWARD, FFTW_MEASURE)
+        temp = fhat
         call dfftw_execute_dft(plan, fhat, fval)
         call dfftw_destroy_plan(plan)
 
