@@ -1,4 +1,5 @@
 module variable_coeff_wave_eq_pseudo_rk
+use, intrinsic :: iso_c_binding
 implicit none
 
 contains
@@ -16,9 +17,9 @@ contains
         real ( kind = 8 ), dimension(nplots+1,n,n), intent(out)        :: result
 
 
-        complex ( kind = 8 ), dimension(n,n) :: temp
+        complex (C_DOUBLE_COMPLEX), dimension(n,n) :: temp
         real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4,k5,k6
-        complex ( kind = 8 ), dimension(n,n) :: vx, vy
+        complex (C_DOUBLE_COMPLEX), dimension(n,n) :: vx, vy
         real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y
 
         integer               :: i, j

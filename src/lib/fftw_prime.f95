@@ -1,12 +1,17 @@
 module fftw_prime
+use, intrinsic :: iso_c_binding
 implicit none
 
+include 'fftw3.f03'
+
 contains
+
+
 
     subroutine fft_prime_2d_partial_x_run(n, v, v_prime)
     implicit none
         integer, intent(in)                                :: n
-        complex ( kind = 8 ), dimension(n, n), intent(in)     :: v
+        complex (C_DOUBLE_COMPLEX), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
         integer               :: i
 
@@ -18,17 +23,10 @@ contains
 
     subroutine fft_prime_2d_partial_y_run(n, v, v_prime)
     implicit none
-        integer, intent(in)                                :: n
-        complex ( kind = 8 ), dimension(n, n), intent(in)     :: v
-        real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
-        real ( kind = 8 ), dimension(n)                :: tempIn
-        integer               :: i
-        integer ( kind = 4 ), parameter :: fftw_forward = -1
-        integer ( kind = 4 ), parameter :: fftw_backward = +1
-        integer ( kind = 4 ), parameter :: fftw_estimate = 64
-        integer ( kind = 4 ), parameter :: FFTW_MEASURE = 0
-        integer                         :: j, plan_forward, plan_backward
-        complex (kind = 8) :: w_hat(n), ifft(n), v_hat(n)
+        integer, intent(in)                                 :: n
+        complex (C_DOUBLE_COMPLEX), dimension(n, n), intent(in)   :: v
+        real ( kind = 8 ), dimension(n, n), intent(inout)   :: v_prime
+        integer                                             :: i
 
         do i=1,n
             call fft_prime_run( n, v(i, :), v_prime(i, :))
@@ -39,7 +37,7 @@ contains
     subroutine fft_prime_2d_run(n, v, v_prime)
     implicit none
         integer, intent(in)                                :: n
-        complex ( kind = 8 ), dimension(n, n), intent(in)     :: v
+        complex (C_DOUBLE_COMPLEX), dimension(n, n), intent(in)     :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)  :: v_prime
         real ( kind = 8 ), dimension(n, n)                 :: v_temp_x, v_temp_y
         integer               :: i, j
@@ -58,28 +56,24 @@ contains
     end subroutine fft_prime_2d_run
 
     subroutine fft_prime_run(n, v, v_prime)
-    implicit none
+        implicit none
         integer, intent(in)                                :: n
-        complex ( kind = 8 ), dimension(n), intent(in)     :: v
+        complex (C_DOUBLE_COMPLEX), dimension(n), intent(in)     :: v
         real ( kind = 8 ), dimension(n), intent(inout)  :: v_prime
-        integer ( kind = 4 ), parameter :: fftw_forward = -1
-        integer ( kind = 4 ), parameter :: fftw_backward = +1
-        integer ( kind = 4 ), parameter :: FFTW_ESTIMATE = 64
-        integer ( kind = 4 ), parameter :: FFTW_MEASURE = 0
-        integer ( kind = 4 ), parameter :: FFTW_PATIENT = 32
-        integer                         :: j, plan_forward, plan_backward
-        complex (kind = 8) :: w_hat(n), ifft(n), v2(n), v_hat(n)
+        integer                         :: j
+        type(C_PTR)                     :: plan_forward, plan_backward
+        complex(C_DOUBLE_COMPLEX)       :: w_hat(n), ifft(n), v2(n), v_hat(n)
 
-        call dfftw_plan_dft_1d_ ( plan_forward, N, v2, v_hat, FFTW_FORWARD, FFTW_MEASURE )
+        plan_forward = fftw_plan_dft_1d ( N, v2, v_hat, FFTW_FORWARD, FFTW_MEASURE )
         v2(1:n) = v(1:n)
-        call dfftw_execute_ ( plan_forward )
-!        call dfftw_destroy_plan_(plan_forward)
+        call fftw_execute_dft ( plan_forward, v2, v_hat )
+        call fftw_destroy_plan(plan_forward)
 
-        call dfftw_plan_dft_1d_ ( plan_backward, N, w_hat, ifft, FFTW_BACKWARD, FFTW_MEASURE )
+        plan_backward = fftw_plan_dft_1d ( N, w_hat, ifft, FFTW_BACKWARD, FFTW_MEASURE )
         w_hat(1:n) = (0., 1.) * (/ (j,j=0,N/2-1), 0, (j,j=-N/2+1,-1) /) * v_hat(1:n)
 
-        call dfftw_execute_ ( plan_backward )
-!        call dfftw_destroy_plan_(plan_backward)
+        call fftw_execute_dft ( plan_backward, w_hat, ifft )
+        call fftw_destroy_plan(plan_backward)
 
         ifft = ifft/n
 

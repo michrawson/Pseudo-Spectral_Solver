@@ -24,16 +24,15 @@ FC      = gfortran
 
 #DEBUG	= -quad
 
-FFLAGS  =  -c 
-FLGS+=-Ofast -march=native
-# FLGS+=-O3 -march=native
+FFLAGS  =  -c -fPIC
+#FLGS+=-Ofast -march=native
+FLGS+=-O3 
+# -march=native -g -fbacktrace -fbounds-check -fcheck=all -Wall -Wextra -Wconversion -pedantic
 
-# -g -fbacktrace -fbounds-check -fcheck=all -Wall -Wextra -Wconversion -pedantic
 
 LIBDIR=../../fftw-3.3.4/.libs
 
 LIBS 	= -L$(LIBDIR) -lfftw3 -lm
-# -lfftw3f
 
 # laptop
 #LIBDIR=
@@ -67,10 +66,13 @@ libnufft.a :  $(AROBJS)
 $(PROJECT): testpoisson2df.o poisson2df.o
 	rm -f $(PROJECT)
 	$(LINKER) $(DEBUG) -o $(PROJECT) testpoisson2df.o poisson2df.o libnufft.a $(LIBS)
-#	./$(PROJECT)
+	./$(PROJECT)
 
-poisson2df: poisson2df.o
-	:
+#poisson2df: poisson2df.o
+#	:
+
+poisson2df.o : poisson2df.f
+	gfortran -c $(FFLAGS) $< -o $@
 
 #$(PROJECT): testpoisson2d.o poisson2d.o
 #	rm -f $(PROJECT)

@@ -102,7 +102,7 @@ contains
         y_hat = 0;
         do k = 1, n
             do j = 1, n
-                y_hat(k) = y_hat(k) + exp((0., 1.) * (-1) * (k-n/2) * x(j))*y(j);
+                y_hat(k) = y_hat(k) + exp((0., 1.) * (-1.0) * (k-n/2) * x(j))*y(j);
             end do
         end do
         y_hat = abs(x(2)-x(1))*y_hat;
