@@ -40,7 +40,7 @@ c
         real *8, allocatable :: x(:),y(:)
         complex *16, allocatable :: ux2(:,:),uy2(:,:)
         data pi/3.141592653589793238462643383279502884197169399d0/
-        
+
 
         dk=min(1.0d0/hx/nx,1.0d0/hy/ny)
 

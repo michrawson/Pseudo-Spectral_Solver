@@ -10,26 +10,26 @@ import matplotlib.pyplot as plt
 #print
 #print fmain.solve.solve_run.__doc__
 
-if True:
-	nplots = 20
-	plotgap = 7
-	n = 96
-	dt = 1./2.**5 * 20./16. * 11./8.
-elif False:
-	nplots = 20
-	plotgap = 8
-	n = 64
-	dt = 1./2.**5 * 20./16. * 33./32. 
-elif False:
-	nplots = 20
-	plotgap = 4
-	n = 160
-	dt = 1./2.**5 * 20./16. * 33./32. *.75
-elif False:
-	nplots = 20
-	plotgap = 5
-	n = 128
-	dt = 1./2.**5 * 20./16. * 33./32. 
+# nplots = 20
+# plotgap = 36
+# n = 64
+# dt = 1./2.**4 * 23./16.
+
+nplots = 20
+plotgap = 21
+n = 96
+dt = 1./2.**5 * 20./16. * 11./8.
+
+# nplots = 20
+# plotgap = 14
+# n = 128
+# dt = 1./2.**5 * 20./16.
+
+# nplots = 20
+# plotgap = 10
+# n = 160
+# dt = 1./2.**5 * 20./16. * 33./32. *.75
+
 
 sigma1 = 2.*(2.52/2.)**2.
 sigma2 = 2.*(13.4/2.)**2.

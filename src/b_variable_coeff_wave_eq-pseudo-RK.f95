@@ -47,13 +47,9 @@ contains
 
         tdata(1) = t
 
-        do i=1, n
-            do j = 1,n
-                result(1,i,j) = v(i,j)
-            end do
-        end do
+        result(1,:,:) = v(:,:)
 
-        prev_max = max_finder_run(n, maxloc(v), v)
+!        prev_max = max_finder_run(n, maxloc(v), v)
 
         do i=1, nplots
 !            print *,"nplot #",i
@@ -64,7 +60,8 @@ contains
 
                 temp = v
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+                prime_y = transpose(prime_y)
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
@@ -74,7 +71,8 @@ contains
 !                temp = v + dt*k1/3.0
                 temp = v + dt*k1/2.0
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+                prime_y = transpose(prime_y)
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
@@ -84,7 +82,8 @@ contains
 !                temp = v + dt*(4.0*k1+6.0*k2)/25.0
                 temp = v + dt*k2/2.0
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+                prime_y = transpose(prime_y)
 
                 vx=0
                 vy=0
@@ -95,7 +94,8 @@ contains
 !                temp = v + dt*(k1-12.0*k2+15.0*k3)/4.0
                 temp = v + dt*k3
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+                prime_y = transpose(prime_y)
 
                 vx=0
                 vy=0
@@ -144,16 +144,16 @@ contains
 
             end do
 
-            curr_max = max_finder_run(n, maxloc(v), v)
-            PRINT *,"error: maxval: diff", ( prev_max - curr_max )
+!            curr_max = max_finder_run(n, maxloc(v), v)
+!            PRINT *,"error: maxval: diff", ( prev_max - curr_max )
+!            prev_max = curr_max
 
-            prev_max = curr_max
-
-            do k=1, n
-                do j = 1,n
-                    result(i+1,k,j) = v(k,j)
-                end do
-            end do
+            result(i+1,:,:) = v(:,:)
+!            do k=1, n
+!                do j = 1,n
+!                    result(i+1,k,j) = v(k,j)
+!                end do
+!            end do
 
             tdata(i+1) = t
         end do

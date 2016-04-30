@@ -21,21 +21,23 @@ bOBJS=$(bSRC:.f95=.o)
 cSRC=$(wildcard c_*.f95)
 cOBJS=$(cSRC:.f95=.o)
 
+.PHONY: main.tsk fmain.so
 
-main.tsk : $(aOBJS) $(bOBJS) $(cOBJS)
+main.tsk :  #$(aOBJS) $(bOBJS) $(cOBJS)
 	( cd ./Shidong_Poisson; $(MAKE) libnufft.a; $(MAKE) poisson2df.o )
 	gfortran $(FLGS) \
                 Shidong_Poisson/poisson2df.o $(aOBJS) $(bOBJS) $(cOBJS) Shidong_Poisson/*.a -o main.tsk \
         		-L../fftw-3.3.4/.libs/ \
                 -lfftw3
 
-fmain : $(aOBJS) $(bOBJS) $(cOBJS) Shidong_Poisson/poisson2df.o
-	rm -f lib/variable_coeff_wave_eq-pseudo-RK.o
+fmain.so :  #$(aOBJS) $(bOBJS) $(cOBJS)
+	( cd ./Shidong_Poisson; $(MAKE) libnufft.a; $(MAKE) poisson2df.o )
 	f2py --fcompiler=gfortran \
                 -I../fftw-3.3.4/api/ \
 				-L../fftw-3.3.4/.libs \
                 -lfftw3 \
-                -c c_fmain.f95 $(aOBJS) $(bOBJS) Shidong_Poisson/poisson2df.o Shidong_Poisson/*.a \
+                -c c_fmain.f95 $(aOBJS) $(bOBJS) Shidong_Poisson/poisson2df.o \
+                Shidong_Poisson/libnufft.a \
                 -m fmain
 # --debug-capi
 
