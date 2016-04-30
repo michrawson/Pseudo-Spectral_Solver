@@ -8,22 +8,23 @@ contains
                                                      h, n, x, y, tdata, result)
     use fftw_prime
     use max_finder
+    use int_finder
     implicit none
         integer, intent(in)          ::  nplots, plotgap
         real ( kind = 8 ), intent(in) :: sigma1, sigma2, dt, delta2, h
         integer, intent(in)          :: n
         real ( kind = 8 ), dimension(n), intent(out)                   :: x, y
-        real ( kind = 8 ), dimension(nplots+1), intent(out)   :: tdata
-        real ( kind = 8 ), dimension(nplots+1,n,n), intent(out)        :: result
-
+        real ( kind = 8 ), dimension(1:nplots+1), intent(out)   :: tdata
+        real ( kind = 8 ), dimension(1:nplots+1,1:n,1:n), intent(out)        :: result
 
         complex (C_DOUBLE_COMPLEX), dimension(n,n) :: temp
         real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4,k5,k6
         complex (C_DOUBLE_COMPLEX), dimension(n,n) :: vx, vy
         real ( kind = 8 ), dimension(n,n) :: prime_x,prime_y
 
-        integer               :: i, j
+        integer                :: i, j, k
         real ( kind = 8 )      :: pi, t, curr_max, prev_max, start, finish
+        real ( kind = 8 )      :: prev_int_v,prev_int_v2,curr_int_v,curr_int_v2
 
         pi = 4.*atan(1.)
         x = h*(/ (j-n/2,j=1,N) /)
@@ -40,18 +41,24 @@ contains
             end do
         end do
 
-        tdata = -1
+        call int_finder_run(n, h, v, prev_int_v)
+
+        call int_finder_run(n, h, v*v, prev_int_v2)
+
         tdata(1) = t
 
-        result = 0
-        result(1,1:n,1:n) = v
+        do i=1, n
+            do j = 1,n
+                result(1,i,j) = v(i,j)
+            end do
+        end do
 
-!        prev_max = max_finder_run(maxloc(v), v)
+        prev_max = max_finder_run(n, maxloc(v), v)
 
         do i=1, nplots
-            print *,"nplot #",i
+!            print *,"nplot #",i
             do j = 1,plotgap
-                print *,"plotgap #",j
+!                print *,"plotgap #",j
 
                 t = t+dt
 
@@ -64,63 +71,71 @@ contains
 
                 k1 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                temp = v + dt*k1/3.0
+!                temp = v + dt*k1/3.0
+                temp = v + dt*k1/2.0
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_y_run(n, temp, prime_y)
-!                temp = v + dt*k1/2.0
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k2 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                temp = v + dt*(4.0*k1+6.0*k2)/25.0
+!                temp = v + dt*(4.0*k1+6.0*k2)/25.0
+                temp = v + dt*k2/2.0
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_y_run(n, temp, prime_y)
 
-!                temp = v + dt*k2/2.0
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k3 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                temp = v + dt*(k1-12.0*k2+15.0*k3)/4.0
+!                temp = v + dt*(k1-12.0*k2+15.0*k3)/4.0
+                temp = v + dt*k3
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_y_run(n, temp, prime_y)
 
-!                temp = v + dt*k3
                 vx=0
                 vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k4 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                temp = v + dt*(6.0*k1+90.0*k2-50.0*k3+8.0*k4)/81.0
-                call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
-                vx=0
-                vy=0
-                call poisson2df(n,n,h,h,temp,vx,vy,1)
+!                temp = v + dt*(6.0*k1+90.0*k2-50.0*k3+8.0*k4)/81.0
+!                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+!                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+!                vx=0
+!                vy=0
+!                call poisson2df(n,n,h,h,temp,vx,vy,1)
+!
+!                k5 = delta2*(-(vy * prime_x) + (vx * prime_y))
+!
+!                temp = v + dt*(6.0*k1+36.0*k2+10.0*k3+8.0*k4)/75.0
+!                call fft_prime_2d_partial_x_run(n, temp, prime_x)
+!                call fft_prime_2d_partial_y_run(n, temp, prime_y)
+!                vx=0
+!                vy=0
+!                call poisson2df(n,n,h,h,temp,vx,vy,1)
+!
+!                k6 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
-                k5 = delta2*(-(vy * prime_x) + (vx * prime_y))
-
-                temp = v + dt*(6.0*k1+36.0*k2+10.0*k3+8.0*k4)/75.0
-                call fft_prime_2d_partial_x_run(n, temp, prime_x)
-                call fft_prime_2d_partial_y_run(n, temp, prime_y)
-                vx=0
-                vy=0
-                call poisson2df(n,n,h,h,temp,vx,vy,1)
-
-                k6 = delta2*(-(vy * prime_x) + (vx * prime_y))
-
-                v = v + dt/192.0*(23.0*k1 + 125.0*k3 - 81.0*k5 + 125.0*k6)
-!                v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
+!                v = v + dt/192.0*(23.0*k1 + 125.0*k3 - 81.0*k5 + 125.0*k6)
+                v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
 !                v = v + dt/6.0*(k1 + 4.0*k2 + k3)
 
                 if (maxval(-result(i,1:n,1:n)) < 0) then
                     PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
                 end if
+
+                call int_finder_run(n, h, v, curr_int_v)
+                PRINT *,"error: integral n^1: diff", prev_int_v-curr_int_v
+                prev_int_v = curr_int_v
+
+                call int_finder_run(n, h, v*v, curr_int_v2)
+                PRINT *,"error: integral n^2: diff", prev_int_v2-curr_int_v2
+                prev_int_v2 = curr_int_v2
 
 !                PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
 !                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
@@ -129,12 +144,17 @@ contains
 
             end do
 
-!            curr_max = max_finder_run(maxloc(v), v)
-!            PRINT *,"error: better maxval: diff", ( prev_max - curr_max )
-!
-!            prev_max = curr_max
+            curr_max = max_finder_run(n, maxloc(v), v)
+            PRINT *,"error: maxval: diff", ( prev_max - curr_max )
 
-            result(i+1,1:n,1:n) = v
+            prev_max = curr_max
+
+            do k=1, n
+                do j = 1,n
+                    result(i+1,k,j) = v(k,j)
+                end do
+            end do
+
             tdata(i+1) = t
         end do
 
