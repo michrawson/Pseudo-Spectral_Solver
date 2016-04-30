@@ -62,8 +62,6 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
                 prime_y = transpose(prime_y)
-                vx=0
-                vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k1 = delta2*(-(vy * prime_x) + (vx * prime_y))
@@ -73,8 +71,6 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
                 prime_y = transpose(prime_y)
-                vx=0
-                vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k2 = delta2*(-(vy * prime_x) + (vx * prime_y))
@@ -85,8 +81,6 @@ contains
                 call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
                 prime_y = transpose(prime_y)
 
-                vx=0
-                vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k3 = delta2*(-(vy * prime_x) + (vx * prime_y))
@@ -96,27 +90,22 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp, prime_x)
                 call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
                 prime_y = transpose(prime_y)
-
-                vx=0
-                vy=0
                 call poisson2df(n,n,h,h,temp,vx,vy,1)
 
                 k4 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
 !                temp = v + dt*(6.0*k1+90.0*k2-50.0*k3+8.0*k4)/81.0
 !                call fft_prime_2d_partial_x_run(n, temp, prime_x)
-!                call fft_prime_2d_partial_y_run(n, temp, prime_y)
-!                vx=0
-!                vy=0
+!                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+!                prime_y = transpose(prime_y)
 !                call poisson2df(n,n,h,h,temp,vx,vy,1)
 !
 !                k5 = delta2*(-(vy * prime_x) + (vx * prime_y))
 !
 !                temp = v + dt*(6.0*k1+36.0*k2+10.0*k3+8.0*k4)/75.0
 !                call fft_prime_2d_partial_x_run(n, temp, prime_x)
-!                call fft_prime_2d_partial_y_run(n, temp, prime_y)
-!                vx=0
-!                vy=0
+!                call fft_prime_2d_partial_x_run(n, transpose(temp), prime_y)
+!                prime_y = transpose(prime_y)
 !                call poisson2df(n,n,h,h,temp,vx,vy,1)
 !
 !                k6 = delta2*(-(vy * prime_x) + (vx * prime_y))
@@ -149,12 +138,6 @@ contains
 !            prev_max = curr_max
 
             result(i+1,:,:) = v(:,:)
-!            do k=1, n
-!                do j = 1,n
-!                    result(i+1,k,j) = v(k,j)
-!                end do
-!            end do
-
             tdata(i+1) = t
         end do
 

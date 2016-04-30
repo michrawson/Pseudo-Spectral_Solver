@@ -10,6 +10,15 @@ import matplotlib.pyplot as plt
 #print
 #print fmain.solve.solve_run.__doc__
 
+# RK5
+# nplots = 20
+# plotgap = 14
+# n = 96
+# dt = 1./2.**5 * 20./16. * 11./8. * 5./4.
+
+
+# RK4
+
 # nplots = 20
 # plotgap = 36
 # n = 64
