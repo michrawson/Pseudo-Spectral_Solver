@@ -1,7 +1,7 @@
 module int_finder
-use dft_mod
-use, intrinsic :: iso_c_binding
-implicit none
+    use dft_mod
+    use, intrinsic :: iso_c_binding
+    implicit none
 
 contains
 
@@ -50,52 +50,52 @@ contains
 
     end subroutine int_finder_run
 
-!    subroutine int_finder_run(n, h, p_v, ret)
-!        implicit none
-!        integer, intent(in)                 :: n
-!        real ( kind = 8 ), intent(in)       :: h, p_v(n,n)
-!        real ( kind = 8 ), intent(out)      :: ret
-!        real ( kind = 8 )                   :: pi, x, hx, hy, xb, xa, yd, yc
-!        real ( kind = 8 ), allocatable      :: xx(:), y(:), w(:), psi(:)
-!        integer                             :: i, j, m
-!        complex (C_DOUBLE_COMPLEX)          :: v_hat(n,n)
-!
-!        pi = 4.*atan(1.)
-!
-!        xa = ceiling((1 - n/2)*h)
-!        xb = floor((n/2)*h)
-!        hx=.5
-!        m = floor((xb-xa-hx/2)/hx)
-!
-!        allocate(xx(m))
-!        allocate(y(m))
-!        allocate(w(m))
-!        allocate(psi(m))
-!
-!        xx = [ (j,j=1,floor((xb-xa-hx/2.)/hx)) ]
-!        xx = xx*hx + xa + hx
-!
-!        y = xx
-!
-!        v_hat = p_v
-!        call dft_2d(n, v_hat)
-!
-!        do i=1,m
-!            x=xx(i)
-!            do j=1,m
-!                w(j) = triginterp_fft([x,y(j)],n,v_hat)
-!            end do
-!            psi(i)=hx*sum(w(1:m))
-!        end do
-!
-!        ret=hx*sum(psi(1:m))
-!
-!        deallocate(xx)
-!        deallocate(y)
-!        deallocate(w)
-!        deallocate(psi)
-!
-!    end subroutine int_finder_run
+    !    subroutine int_finder_run(n, h, p_v, ret)
+    !        implicit none
+    !        integer, intent(in)                 :: n
+    !        real ( kind = 8 ), intent(in)       :: h, p_v(n,n)
+    !        real ( kind = 8 ), intent(out)      :: ret
+    !        real ( kind = 8 )                   :: pi, x, hx, hy, xb, xa, yd, yc
+    !        real ( kind = 8 ), allocatable      :: xx(:), y(:), w(:), psi(:)
+    !        integer                             :: i, j, m
+    !        complex (C_DOUBLE_COMPLEX)          :: v_hat(n,n)
+    !
+    !        pi = 4.*atan(1.)
+    !
+    !        xa = ceiling((1 - n/2)*h)
+    !        xb = floor((n/2)*h)
+    !        hx=.5
+    !        m = floor((xb-xa-hx/2)/hx)
+    !
+    !        allocate(xx(m))
+    !        allocate(y(m))
+    !        allocate(w(m))
+    !        allocate(psi(m))
+    !
+    !        xx = [ (j,j=1,floor((xb-xa-hx/2.)/hx)) ]
+    !        xx = xx*hx + xa + hx
+    !
+    !        y = xx
+    !
+    !        v_hat = p_v
+    !        call dft_2d(n, v_hat)
+    !
+    !        do i=1,m
+    !            x=xx(i)
+    !            do j=1,m
+    !                w(j) = triginterp_fft([x,y(j)],n,v_hat)
+    !            end do
+    !            psi(i)=hx*sum(w(1:m))
+    !        end do
+    !
+    !        ret=hx*sum(psi(1:m))
+    !
+    !        deallocate(xx)
+    !        deallocate(y)
+    !        deallocate(w)
+    !        deallocate(psi)
+    !
+    !    end subroutine int_finder_run
 
     real ( kind = 8 ) function triginterp_caller(p_x1, p_x2, n)
         implicit none

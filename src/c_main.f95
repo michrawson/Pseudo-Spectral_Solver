@@ -22,7 +22,7 @@ program main
     h = 44.0/n
 
     call variable_coeff_wave_eq_pseudo_rk_run(nplots, plotgap, &
-            sigma1, sigma2, dt, delta2,h,n,x,y,tdata,result)
+        sigma1, sigma2, dt, delta2,h,n,x,y,tdata,result)
 
     PRINT *,"x",x(1)
     PRINT *,"tdata",tdata(1)

@@ -1,6 +1,6 @@
 module max_finder
-use dft_mod
-implicit none
+    use dft_mod
+    implicit none
 
 
 contains
@@ -37,9 +37,9 @@ contains
         integer, intent(in)       :: x0_index(2)
         real ( kind = 8 ), intent(in)       :: p_y(n,n)
         real ( kind = 8 )                   :: pi, x(2), grad_y(2), x0(2), &
-                                                hess_y(2,2), hess_inv_y(2,2)
+            hess_y(2,2), hess_inv_y(2,2)
         complex ( kind = 8 ), dimension(n, n)  ::  fft_2d_prime_x_of_y, fft_2d_prime_y_of_y, &
-                    fft_2d_prime_x_x_of_y, fft_2d_prime_y_y_of_y, fft_2d_prime_x_y_of_y, fft_2d_prime_y_x_of_y
+            fft_2d_prime_x_x_of_y, fft_2d_prime_y_y_of_y, fft_2d_prime_x_y_of_y, fft_2d_prime_y_x_of_y
         integer                             :: iter_count
 
         pi = 4.*atan(1.)
@@ -68,17 +68,17 @@ contains
         call fft_prime_prime_2d_partial_y_x(n, fft_2d_prime_y_x_of_y)
 
         grad_y = [  triginterp_fft(n, x, fft_2d_prime_x_of_y), &
-                    triginterp_fft(n, x, fft_2d_prime_y_of_y) ]
+            triginterp_fft(n, x, fft_2d_prime_y_of_y) ]
 
         iter_count = 0
         do while (maxval(abs(grad_y)) > 10d-14)
             grad_y = [  triginterp_fft(n, x, fft_2d_prime_x_of_y), &
-                        triginterp_fft(n, x, fft_2d_prime_y_of_y) ]
+                triginterp_fft(n, x, fft_2d_prime_y_of_y) ]
 
             hess_y(1,:) = [ triginterp_fft(n, x,fft_2d_prime_x_x_of_y), &
-                            triginterp_fft(n, x,fft_2d_prime_x_y_of_y)]
+                triginterp_fft(n, x,fft_2d_prime_x_y_of_y)]
             hess_y(2,:) = [ triginterp_fft(n, x,fft_2d_prime_y_x_of_y), &
-                            triginterp_fft(n, x,fft_2d_prime_y_y_of_y)]
+                triginterp_fft(n, x,fft_2d_prime_y_y_of_y)]
             hess_inv_y(1,:) = [hess_y(2,2), -1*hess_y(1,2)]
             hess_inv_y(2,:) = [-1*hess_y(2,1), hess_y(1,1)]
             hess_inv_y = 1.0/((hess_y(1,1)*hess_y(2,2))-(hess_y(1,2)*hess_y(2,1)))*hess_inv_y
@@ -86,7 +86,7 @@ contains
             x = x - MATMUL(hess_inv_y, grad_y)
 
             iter_count = iter_count + 1
-!            print *,"desc count",iter_count
+        !            print *,"desc count",iter_count
         end do
 
         max_finder_run = triginterp(n, x, p_y)
