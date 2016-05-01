@@ -1,8 +1,7 @@
 #-std=f95
-FLGS=-I. -freal-4-real-8 -I../fftw-3.3.4/api/ -fPIC
-FLGS+=-Ofast -march=native
-#FLGS+=-O3 -march=native
-#FLGS+=-g -fbounds-check -fbacktrace -Wall -Wextra  -pedantic  -fcheck=all -Warray-temporaries -fimplicit-none -ffree-line-length-0 -ffpe-trap=zero,overflow -finit-real=nan      -Wconversion     
+FFLAGS=-I. -freal-4-real-8 -I../fftw-3.3.4/api/ -fPIC
+FFLAGS+=-Ofast -march=native
+#FFLAGS+=-O0 -march=native -g -fbounds-check -fbacktrace -Wall -Wextra  -pedantic  -fcheck=all -Warray-temporaries -fimplicit-none -ffree-line-length-0 -ffpe-trap=zero,overflow -finit-real=nan      -Wconversion     
 
 aSRC=$(wildcard a_*.f95)
 aOBJS=$(aSRC:.f95=.o)
@@ -25,7 +24,7 @@ cOBJS=$(cSRC:.f95=.o)
 
 main.tsk : $(aOBJS) $(bOBJS) $(cOBJS)
 	( cd ./Shidong_Poisson; $(MAKE) libnufft.a; $(MAKE) poisson2df.o )
-	gfortran $(FLGS) \
+	gfortran $(FFLAGS) \
                 Shidong_Poisson/poisson2df.o $(aOBJS) $(bOBJS) $(cOBJS) Shidong_Poisson/*.a -o main.tsk \
         		-L../fftw-3.3.4/.libs/ \
                 -lfftw3
@@ -42,10 +41,10 @@ fmain.so : $(aOBJS) $(bOBJS)
 # --debug-capi
 
 %.o : %.f95
-	gfortran -c $(FLGS) $< -o $@
+	gfortran -c $(FFLAGS) $< -o $@
 
 %.o : %.f
-	gfortran -c $(FLGS) $< -o $@
+	gfortran -c $(FFLAGS) $< -o $@
 
 clean:
 	( cd ./Shidong_Poisson; $(MAKE) clean )

@@ -16,7 +16,8 @@ c
 c
 c
 c
-        subroutine poisson2df(nx,ny,hx,hy,f0,ux,uy,iprec)
+        subroutine poisson2df(nx,ny,hx,hy,f0,ux,uy,iprec,
+     &      aplan, bplan, f2, fhat2, fhatx, fhaty)
 c
 c       This subroutine solves the 2D Poisson equation -\Delta u = f  
 c       in free space and returns the user u_x and u_y on a uniform grid.
@@ -37,10 +38,14 @@ c       WARNING: only works even nx and ny now!
 c
         implicit real *8 (a-h,o-z)
         complex *16 ux(nx,ny),uy(nx,ny),f0(nx,ny)
-        real *8, allocatable :: x(:),y(:)
         complex *16, allocatable :: ux2(:,:),uy2(:,:)
+        integer *8  :: aplan, bplan
+        complex *16 :: fhatx(3*nx,3*ny),fhaty(3*nx,3*ny)
+        complex *16 :: f2(3*nx,3*ny),fhat2(3*nx,3*ny)
         data pi/3.141592653589793238462643383279502884197169399d0/
 
+!        fftw_plan_forward=0
+!        fftw_plan_back=0
 
         dk=min(1.0d0/hx/nx,1.0d0/hy/ny)
 
@@ -57,7 +62,8 @@ c        call prin2('R1=*',R1,1)
            kfac=2
         endif
 
-        call ufftpart(hx,hy,nx,ny,kfac,R0,R1,f0,ux,uy)
+        call ufftpart(hx,hy,nx,ny,kfac,nx*kfac,ny*kfac,R0,R1,f0,ux,uy,
+     &     aplan, bplan, f2, fhat2, fhatx, fhaty)
 
         if (iprec .eq. 1) then
            nr=60
@@ -88,18 +94,23 @@ c
 c
 c
 c
-        subroutine fft2(nx,ny,fval,fhat)
+        subroutine fft2(nx,ny,fval,fhat,plan)
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
         complex *16 fval(nx,ny),temp(nx,ny),fhat(nx,ny)
 
         t1=second()
-        call dfftw_plan_dft_2d(plan, nx,ny, temp,fhat,
-     &      FFTW_FORWARD, FFTW_MEASURE)
-        temp = fval
+!        plan=0
+        if (plan .eq. 0) then
+            temp = fval
+!            print *,"comp plan"
+            call dfftw_plan_dft_2d(plan, nx,ny, fval,fhat,
+     &            FFTW_FORWARD, FFTW_MEASURE)
+            fval = temp
+        end if
         call dfftw_execute_dft(plan, fval, fhat)
-        call dfftw_destroy_plan(plan)
+!        call dfftw_destroy_plan(plan)
         t2=second()
 
         call prin2('after forward fft, time (sec)=*',t2-t1,1)
@@ -110,18 +121,23 @@ c
 c
 c
 c
-        subroutine ifft2(nx,ny,fhat,fval)
+        subroutine ifft2(nx,ny,fhat,fval,plan)
         implicit real *8 (a-h,o-z)
         include "fftw3.f"
         integer *8 plan
         complex *16 fval(nx,ny),temp(nx,ny),fhat(nx,ny)
 
         t1=second()
-        call dfftw_plan_dft_2d(plan, nx,ny, temp,fval,
-     &      FFTW_BACKWARD, FFTW_MEASURE)
-        temp = fhat
+!        plan=0
+        if (plan .eq. 0) then
+            temp = fhat
+!            print *,"comp plan"
+            call dfftw_plan_dft_2d(plan, nx,ny, fhat,fval,
+     &            FFTW_BACKWARD, FFTW_MEASURE)
+            fhat = temp
+        end if
         call dfftw_execute_dft(plan, fhat, fval)
-        call dfftw_destroy_plan(plan)
+!        call dfftw_destroy_plan(plan)
 
         nt=nx*ny
         fval=fval/nt
@@ -136,28 +152,32 @@ c
 c
 c
 c
-        subroutine ufftpart(hx,hy,nx,ny,kfac,R0,R1,f0,ux,uy)
+        subroutine ufftpart(hx,hy,nx,ny,kfac,n1,n2,R0,R1,f0,ux,uy,
+     &      aplan, bplan, f2, fhat2, fhatx, fhaty)
         implicit real *8 (a-h,o-z)
         real *8, allocatable :: rk1(:),rk2(:)
         parameter (pi=3.141592653589793d0)
         complex *16 ux(nx,ny),uy(nx,ny),f0(nx,ny),ima
-        complex *16, allocatable :: f1(:,:),fhatx(:,:),fhaty(:,:)
-	complex *16, allocatable :: f2(:,:),fhat(:,:),fhat2(:,:)
+        complex *16, allocatable :: f1(:,:),fhat(:,:)
+        complex *16 :: fhatx(n1,n2),fhaty(n1,n2)
+	    complex *16 :: f2(n1,n2),fhat2(n1,n2)
+        integer *8  :: aplan, bplan
         data ima/(0.0d0,1.0d0)/
 
-        n1=nx*kfac
-        n2=ny*kfac
+!        n1=nx*kfac
+!        n2=ny*kfac
 
         allocate( f1(n1,n2) )
-        allocate( f2(n1,n2) )
+!        allocate( f2(n1,n2) )
         allocate( fhat(n1,n2) )
-        allocate( fhatx(n1,n2) )
-        allocate( fhaty(n1,n2) )
-        allocate( fhat2(n1,n2) )
+!        allocate( fhatx(n1,n2) )
+!        allocate( fhaty(n1,n2) )
+!        allocate( fhat2(n1,n2) )
 
         call zeropad(nx,ny,kfac,f0,f1)
         call ifftshift2(n1,n2,f1,f2)
-        call fft2(n1,n2,f2,fhat2)
+!        fftw_plan_forward=0
+        call fft2(n1,n2,f2,fhat2,aplan)
         call ifftshift2(n1,n2,fhat2,fhat)
 
         allocate( rk1(n1) )
@@ -184,7 +204,8 @@ c
 
         fhatx(n1/2+1,n2/2+1)=0
         call ifftshift2(n1,n2,fhatx,fhat2)
-        call ifft2(n1,n2,fhat2,fhatx)
+!        fftw_plan_back=0
+        call ifft2(n1,n2,fhat2,fhatx,bplan)
         call ifftshift2(n1,n2,fhatx,fhat2)
 
         ux=fhat2((/(ncx+i, i=1,nx)/),(/(ncy+i, i=1,ny)/))
@@ -192,7 +213,8 @@ c
 
         fhaty(n1/2+1,n2/2+1)=0
         call ifftshift2(n1,n2,fhaty,fhat2)
-        call ifft2(n1,n2,fhat2,fhaty)
+!        fftw_plan_back=0
+        call ifft2(n1,n2,fhat2,fhaty,bplan)
         call ifftshift2(n1,n2,fhaty,fhat2)
 
         uy=fhat2((/(ncx+i, i=1,nx)/),(/(ncy+i, i=1,ny)/))

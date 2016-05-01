@@ -6,15 +6,16 @@ include 'fftw3.f03'
 
 contains
 
-    subroutine fft_prime_2d_partial_x_run(n, v, v_prime)
+    subroutine fft_prime_2d_partial_x_run(n, v, v_prime, fft_prime_plan_forward, fft_prime_plan_back)
     implicit none
         integer, intent(in)                                 :: n
-        complex (C_DOUBLE_COMPLEX), dimension(n, n), intent(in)   :: v
+        complex (C_DOUBLE_COMPLEX), dimension(n, n), intent(inout)   :: v
         real ( kind = 8 ), dimension(n, n), intent(inout)   :: v_prime
         integer                                             :: i
+        type(C_PTR), intent(inout)       :: fft_prime_plan_forward, fft_prime_plan_back
 
         do i=1,n
-            call fft_prime_run( n, v(:, i), v_prime(:, i))
+            call fft_prime_run( n, v(:, i), v_prime(:, i), fft_prime_plan_forward, fft_prime_plan_back)
         end do
 
     end subroutine fft_prime_2d_partial_x_run
@@ -56,25 +57,32 @@ contains
 !
 !    end subroutine fft_prime_2d_run
 
-    subroutine fft_prime_run(n, v, v_prime)
+    subroutine fft_prime_run(n, v, v_prime, fft_prime_plan_forward, fft_prime_plan_back)
         implicit none
         integer, intent(in)                                :: n
-        complex (C_DOUBLE_COMPLEX), dimension(n), intent(in)     :: v
+        complex (C_DOUBLE_COMPLEX), dimension(n), intent(inout)     :: v
         real ( kind = 8 ), dimension(n), intent(inout)  :: v_prime
         integer                         :: j
-        type(C_PTR)                     :: plan_forward, plan_backward
-        complex(C_DOUBLE_COMPLEX)       :: w_hat(n), ifft(n), v2(n), v_hat(n)
+        type(C_PTR), intent(inout)       :: fft_prime_plan_forward, fft_prime_plan_back
+        complex(C_DOUBLE_COMPLEX)       :: w_hat(n), ifft(n), temp(n), v_hat(n)
 
-        plan_forward = fftw_plan_dft_1d ( N, v2, v_hat, FFTW_FORWARD, FFTW_MEASURE )
-        v2(1:n) = v(1:n)
-        call fftw_execute_dft ( plan_forward, v2, v_hat )
-        call fftw_destroy_plan(plan_forward)
+        if (c_associated(fft_prime_plan_forward) .eqv. .false.) then
+            temp(1:n) = v(1:n)
+            fft_prime_plan_forward = fftw_plan_dft_1d ( N, v, v_hat, FFTW_FORWARD, FFTW_MEASURE )
+            v(1:n) = temp(1:n)
+        end if
 
-        plan_backward = fftw_plan_dft_1d ( N, w_hat, ifft, FFTW_BACKWARD, FFTW_MEASURE )
+        call fftw_execute_dft(fft_prime_plan_forward, v, v_hat)
+!        call fftw_destroy_plan(fft_prime_plan_forward)
+
+        if (c_associated(fft_prime_plan_back) .eqv. .false.) then
+            fft_prime_plan_back = fftw_plan_dft_1d ( N, w_hat, ifft, FFTW_BACKWARD, FFTW_MEASURE )
+        end if
+
         w_hat(1:n) = (0., 1.) * (/ (j,j=0,N/2-1), 0, (j,j=-N/2+1,-1) /) * v_hat(1:n)
 
-        call fftw_execute_dft ( plan_backward, w_hat, ifft )
-        call fftw_destroy_plan(plan_backward)
+        call fftw_execute_dft(fft_prime_plan_back, w_hat, ifft)
+!        call fftw_destroy_plan(fft_prime_plan_back)
 
         v_prime = real(ifft/n)
 

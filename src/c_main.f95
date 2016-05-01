@@ -3,7 +3,7 @@ program main
     use variable_coeff_wave_eq_pseudo_rk
 
     implicit none
-    integer, parameter           :: n = 96
+    integer, parameter           :: n = 16
     integer, parameter           :: nplots = 1
 
     real ( kind = 8 ), dimension(nplots+1)      :: tdata
@@ -11,7 +11,7 @@ program main
 
     real ( kind = 8 )                 :: x(n), y(n)
 
-    integer           :: plotgap = 1
+    integer           :: plotgap = 100
     real ( kind = 8 ) :: sigma1 = 2.52
     real ( kind = 8 ) :: sigma2 = 13.4
     real ( kind = 8 ) :: dt, pi, delta2, h
