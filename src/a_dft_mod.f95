@@ -152,8 +152,7 @@ contains
                 end do
             end do
         end do
-        y_hat = abs(x(2)-x(1))*y_hat
-        y = y_hat
+        y = abs(x(2)-x(1))*y_hat
     end subroutine dft_2d
 
 end module dft_mod

@@ -1,21 +1,22 @@
 module variable_coeff_wave_eq_pseudo_rk
     use, intrinsic :: iso_c_binding
+    use fftw_prime
+    use max_finder
+    use int_finder
     implicit none
 
 contains
 
     subroutine variable_coeff_wave_eq_pseudo_rk_run( nplots, plotgap, sigma1, sigma2, dt, delta2, &
-        h, n, x, y, tdata, result)
-        use fftw_prime
-        use max_finder
-        use int_finder
+        h, n, x, y, tdata, result, int_res, int2_res, max_res, min_res)
         implicit none
         integer, intent(in)          ::  nplots, plotgap
         real ( kind = 8 ), intent(in) :: sigma1, sigma2, dt, delta2, h
         integer, intent(in)          :: n
         real ( kind = 8 ), dimension(n), intent(out)                   :: x, y
         real ( kind = 8 ), dimension(1:nplots+1), intent(out)   :: tdata
-        real ( kind = 8 ), dimension(1:nplots+1,1:n,1:n), intent(out)        :: result
+        real ( kind = 8 ), dimension(1:nplots+1,1:n,1:n), intent(out)   :: result
+        real ( kind = 8 ), dimension(1:nplots), intent(out) :: int_res, int2_res, max_res, min_res
 
         complex (C_DOUBLE_COMPLEX), dimension(n,n) :: temp, temp_t
         real ( kind = 8 ), dimension(n,n) :: v, k1,k2,k3,k4,k5,k6
@@ -57,12 +58,12 @@ contains
 
         result(1,:,:) = v(:,:)
 
-        !        prev_max = max_finder_run(n, maxloc(v), v)
+        prev_max = max_finder_run(n, maxloc(v), v)
 
         do i=1, nplots
-            !            print *,"nplot #",i
+            print *,"nplot #",i
             do j = 1,plotgap
-                !                print *,"plotgap #",j
+                print *,"plotgap #",j
 
                 t = t+dt
 
@@ -84,8 +85,8 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp_t, prime_y, fft_prime_plan_forward, fft_prime_plan_back)
                 prime_y = transpose(prime_y)
 
-                !                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
-                !                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
+                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
+                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
 
                 k2 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
@@ -96,8 +97,8 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp_t, prime_y, fft_prime_plan_forward, fft_prime_plan_back)
                 prime_y = transpose(prime_y)
 
-                !                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
-                !                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
+                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
+                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
 
                 k3 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
@@ -108,8 +109,8 @@ contains
                 call fft_prime_2d_partial_x_run(n, temp_t, prime_y, fft_prime_plan_forward, fft_prime_plan_back)
                 prime_y = transpose(prime_y)
 
-                !                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
-                !                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
+                call poisson2df(n,n,h,h,temp,vx,vy,1,poisson2df_fftw_plan_forward, &
+                                poisson2df_fftw_plan_back,f2, fhat2, fhatx, fhaty)
 
                 k4 = delta2*(-(vy * prime_x) + (vx * prime_y))
 
@@ -133,17 +134,6 @@ contains
                 v = v + dt/6.0*(k1 + 2.0*k2 + 2.0*k3 + k4)
                 !                v = v + dt/6.0*(k1 + 4.0*k2 + k3)
 
-                if (maxval(-result(i,1:n,1:n)) < 0) then
-                    PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
-                end if
-
-                call int_finder_run(n, h, v, curr_int_v)
-                PRINT *,"error: integral n^1: diff", prev_int_v-curr_int_v
-                prev_int_v = curr_int_v
-
-                call int_finder_run(n, h, v*v, curr_int_v2)
-                PRINT *,"error: integral n^2: diff", prev_int_v2-curr_int_v2
-                prev_int_v2 = curr_int_v2
 
             !                PRINT *,"error: volume: diff", (abs( SUM(MATMUL(v,(/ (1,j=1,N) /))) &
             !                                             - SUM(MATMUL(result(1,1:n,1:n),(/ (1,j=1,N) /))) ))
@@ -152,9 +142,26 @@ contains
 
             end do
 
-            !            curr_max = max_finder_run(n, maxloc(v), v)
-            !            PRINT *,"error: maxval: diff", ( prev_max - curr_max )
-            !            prev_max = curr_max
+            curr_max = max_finder_run(n, maxloc(v), v)
+!            PRINT *,"error: maxval: diff", ( prev_max - curr_max )
+            max_res(i) = curr_max ! abs(curr_max - prev_max)
+            prev_max = curr_max
+
+            min_res(i) = minval(v)
+
+!            if (minval(result(i,1:n,1:n)) < 0) then
+!                PRINT *,"error: minval: ", maxval(-result(i,1:n,1:n))
+!            end if
+
+            call int_finder_run(n, h, v*v, curr_int_v2)
+!            PRINT *,"error: integral n^2: diff", prev_int_v2-curr_int_v2
+            int2_res(i) = curr_int_v2 ! abs(curr_int_v2-prev_int_v2)
+            prev_int_v2 = curr_int_v2
+
+            call int_finder_run(n, h, v, curr_int_v)
+            int_res(i) = curr_int_v ! abs(prev_int_v-curr_int_v)
+!                PRINT *,"error: integral n^1: diff", prev_int_v-curr_int_v
+            prev_int_v = curr_int_v
 
             result(i+1,:,:) = v(:,:)
             tdata(i+1) = t

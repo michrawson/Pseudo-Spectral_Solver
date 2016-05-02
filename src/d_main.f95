@@ -8,6 +8,7 @@ program main
 
     real ( kind = 8 ), dimension(nplots+1)      :: tdata
     real ( kind = 8 ), dimension(1:nplots+1,1:n,1:n)  :: result
+    real ( kind = 8 ), dimension(1:nplots) :: int_res, int2_res, max_res, min_res
 
     real ( kind = 8 )                 :: x(n), y(n)
 
@@ -22,7 +23,8 @@ program main
     h = 44.0/n
 
     call variable_coeff_wave_eq_pseudo_rk_run(nplots, plotgap, &
-        sigma1, sigma2, dt, delta2,h,n,x,y,tdata,result)
+        sigma1, sigma2, dt, delta2,h,n,x,y,tdata,result, int_res, &
+        int2_res, max_res, min_res)
 
     PRINT *,"x",x(1)
     PRINT *,"tdata",tdata(1)

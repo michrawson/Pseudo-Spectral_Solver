@@ -25,7 +25,7 @@ FC      = gfortran
 #DEBUG	= -quad
 
 FFLAGS  =  -c -fPIC
-FFLAGS += -Ofast -march=native
+FFLAGS += -O3 -march=native
 #FFLAGS += -O0 -march=native -g -fbacktrace -fbounds-check -fcheck=all -Wall -Wextra -Wconversion -pedantic -Warray-temporaries -ffree-line-length-0 -ffpe-trap=zero,overflow -finit-real=nan -Wconversion     
 
 LIBDIR=../../fftw-3.3.4/.libs
