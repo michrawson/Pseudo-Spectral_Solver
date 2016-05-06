@@ -31,71 +31,22 @@ contains
             end do
         end do
 
-        call int_finder_run(n, h, y, ret)
-
-        int_finder_run_caller = ret
+        int_finder_run_caller = int_finder_run(n, h, y)
 
     end function int_finder_run_caller
 
-    subroutine int_finder_run(n, h, p_v, ret)
+    real (kind=8) function int_finder_run(n, h, p_v)
         implicit none
         integer, intent(in)                 :: n
         real ( kind = 8 ), intent(in)       :: h, p_v(n,n)
-        real ( kind = 8 ), intent(out)      :: ret
         complex (C_DOUBLE_COMPLEX), dimension(n,n) :: v_hat
 
         v_hat = p_v
         call fft2_F95(n, v_hat)
-        ret=real(v_hat(1,1))*h*h
 
-    end subroutine int_finder_run
+        int_finder_run = real(v_hat(1,1))*h*h
 
-    !    subroutine int_finder_run(n, h, p_v, ret)
-    !        implicit none
-    !        integer, intent(in)                 :: n
-    !        real ( kind = 8 ), intent(in)       :: h, p_v(n,n)
-    !        real ( kind = 8 ), intent(out)      :: ret
-    !        real ( kind = 8 )                   :: pi, x, hx, hy, xb, xa, yd, yc
-    !        real ( kind = 8 ), allocatable      :: xx(:), y(:), w(:), psi(:)
-    !        integer                             :: i, j, m
-    !        complex (C_DOUBLE_COMPLEX)          :: v_hat(n,n)
-    !
-    !        pi = 4.*atan(1.)
-    !
-    !        xa = ceiling((1 - n/2)*h)
-    !        xb = floor((n/2)*h)
-    !        hx=.5
-    !        m = floor((xb-xa-hx/2)/hx)
-    !
-    !        allocate(xx(m))
-    !        allocate(y(m))
-    !        allocate(w(m))
-    !        allocate(psi(m))
-    !
-    !        xx = [ (j,j=1,floor((xb-xa-hx/2.)/hx)) ]
-    !        xx = xx*hx + xa + hx
-    !
-    !        y = xx
-    !
-    !        v_hat = p_v
-    !        call dft_2d(n, v_hat)
-    !
-    !        do i=1,m
-    !            x=xx(i)
-    !            do j=1,m
-    !                w(j) = triginterp_fft([x,y(j)],n,v_hat)
-    !            end do
-    !            psi(i)=hx*sum(w(1:m))
-    !        end do
-    !
-    !        ret=hx*sum(psi(1:m))
-    !
-    !        deallocate(xx)
-    !        deallocate(y)
-    !        deallocate(w)
-    !        deallocate(psi)
-    !
-    !    end subroutine int_finder_run
+    end function int_finder_run
 
     real ( kind = 8 ) function triginterp_caller(p_x1, p_x2, n)
         implicit none

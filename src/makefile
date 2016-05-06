@@ -1,6 +1,7 @@
 #-std=f95
 FFLAGS=-I. -freal-4-real-8 -I../fftw-3.3.4/api/ -fPIC
-FFLAGS+=-O3 -march=native
+#FFLAGS+=-Ofast -march=native
+FFLAGS+=-O3 -march=native -ffpe-trap=zero,overflow,underflow -finit-real=nan 
 #FFLAGS+=-O0 -march=native -g -fbounds-check -fbacktrace -Wall -Wextra  -pedantic  -fcheck=all -Warray-temporaries -fimplicit-none -ffree-line-length-0 -ffpe-trap=zero,overflow -finit-real=nan      -Wconversion     
 
 aSRC=$(wildcard a_*.f95)
@@ -53,6 +54,4 @@ fmain.so : $(aOBJS) $(bOBJS) $(cOBJS)
 
 clean:
 	( cd ./Shidong_Poisson; $(MAKE) clean )
-	( cd lib; rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM )
 	rm -rf *.mod *.o *.so *.tsk *.tsk.dSYM *.so.dSYM
-

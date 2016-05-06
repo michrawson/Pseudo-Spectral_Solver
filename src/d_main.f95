@@ -8,11 +8,11 @@ program main
 
     real ( kind = 8 ), dimension(nplots+1)      :: tdata
     real ( kind = 8 ), dimension(1:nplots+1,1:n,1:n)  :: result
-    real ( kind = 8 ), dimension(1:nplots) :: int_res, int2_res, max_res, min_res
+    real ( kind = 8 ), dimension(1:nplots+1) :: int_res, int2_res, max_res, min_res
 
     real ( kind = 8 )                 :: x(n), y(n)
 
-    integer           :: plotgap = 100
+    integer           :: plotgap = 1
     real ( kind = 8 ) :: sigma1 = 2.52
     real ( kind = 8 ) :: sigma2 = 13.4
     real ( kind = 8 ) :: dt, pi, delta2, h
