@@ -14,7 +14,7 @@ contains
 
         call dft_2d(n, v)
         do i=1,n
-            v(i,:) = (-1)*(/ (j,j=-N/2+1,N/2-1), 0 /) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(i,:)
+            v(i,:) = (-1)*(/ (j,j=-N/2+1,N/2) /) * (/ (j,j=-N/2+1,N/2) /) * v(i,:)
         end do
     end subroutine fft_prime_prime_2d_partial_y_y
 
@@ -26,7 +26,7 @@ contains
 
         call dft_2d(n, v)
         do i=1,n
-            v(:,i) = (-1)*(/ (j,j=-N/2+1,N/2-1), 0 /) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(:,i)
+            v(:,i) = (-1)*(/ (j,j=-N/2+1,N/2) /) * (/ (j,j=-N/2+1,N/2) /) * v(:,i)
         end do
     end subroutine fft_prime_prime_2d_partial_x_x
 
@@ -40,6 +40,7 @@ contains
         do i=1,n
             v(:,i) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(:,i)
         end do
+
         do i=1,n
             v(i,:) = (0., 1.) * (/ (j,j=-N/2+1,N/2-1), 0 /) * v(i,:)
         end do

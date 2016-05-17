@@ -70,7 +70,10 @@ for i in range(result.shape[0]):
 
     plt.savefig('wave-'+str(n)+'-'+format(i, '02')+".png")
 
+
+sys.exit()
 ###################################################################
+
 
 # nplots = 20
 plotgap = 5
@@ -112,6 +115,7 @@ for i in range(result.shape[0]):
     plt.imshow(result[i,:,:], vmin=-.1, vmax=1.1, extent=[x[0],x[-1],y[0],y[-1]])
 
     plt.savefig('wave-'+str(n)+'-'+format(i, '02')+".png")
+
 
 ###################################################################
 
